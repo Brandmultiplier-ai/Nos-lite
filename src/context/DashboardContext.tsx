@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { mergeAnonymousWorkspaceProfile } from "@/data/anonymousWorkspace";
 import { getWorkspaceDataWithDemo } from "@/data/demoWorkspace";
 import type { SectionId, WorkspaceData, WorkspaceId } from "@/types/nos";
 
@@ -34,7 +35,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [workspaceTransitioning, setWorkspaceTransitioning] = useState(false);
   const switchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const data = useMemo(() => getWorkspaceDataWithDemo(workspaceId), [workspaceId]);
+  const data = useMemo(
+    () => mergeAnonymousWorkspaceProfile(workspaceId, getWorkspaceDataWithDemo(workspaceId)),
+    [workspaceId],
+  );
 
   const handleSetWorkspaceId = useCallback((id: WorkspaceId) => {
     setWorkspaceId(id);

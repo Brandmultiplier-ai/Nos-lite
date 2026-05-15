@@ -10,12 +10,14 @@ import {
   YAxis,
 } from "recharts";
 import { axisStyle, chartGridStroke, tooltipContentStyle } from "@/components/charts/chartTheme";
+import { CardInfoTip, MetricHeadingWithInfo } from "@/components/ui/CardInfoTip";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { IntegrationStrip } from "@/components/ui/IntegrationStrip";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useDashboard } from "@/context/DashboardContext";
 import { HiOutlineChevronRight, HiOutlineX } from "react-icons/hi";
 import { useEffect, useMemo, useState } from "react";
+import { CHART_CARD_DESCRIPTIONS, METRIC_DESCRIPTIONS } from "@/data/metricDescriptions";
 
 type LinkedInView = "overview" | "contacts" | "campaigns";
 type TimeWindow = "7d" | "30d" | "3m" | "month";
@@ -320,7 +322,11 @@ export function LinkedInSection() {
             <div className="divide-y divide-white/[0.06]">
               <div className="grid grid-cols-1 lg:grid-cols-12">
                 <div className="p-6 lg:col-span-3 lg:border-e lg:border-white/[0.06]">
-                  <p className="text-xs uppercase tracking-[0.1em] text-[#A0AEC0]">Next actions</p>
+                  <MetricHeadingWithInfo
+                    title="Next actions"
+                    hint={METRIC_DESCRIPTIONS["Next actions"] ?? ""}
+                    titleClassName="text-xs font-semibold uppercase tracking-[0.1em] text-[#A0AEC0]"
+                  />
                   <p className="mt-2 text-3xl font-bold text-white">
                     {Math.max(2, Math.round(12 * timeMetrics.kpiMult))}
                   </p>
@@ -347,7 +353,11 @@ export function LinkedInSection() {
                     key={m.label}
                     className="border-b border-white/[0.06] p-6 last:border-b-0 sm:border-e sm:last:border-e-0 lg:col-span-3 lg:border-e lg:border-white/[0.06] lg:last:border-e-0 lg:last:border-b-0"
                   >
-                    <p className="text-xs uppercase tracking-[0.08em] text-[#A0AEC0]">{m.label}</p>
+                    <MetricHeadingWithInfo
+                      title={m.label}
+                      hint={METRIC_DESCRIPTIONS[m.label] ?? ""}
+                      titleClassName="text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]"
+                    />
                     <p className="mt-2 text-4xl font-bold leading-none text-white">{m.value}</p>
                     <p className="mt-1 text-sm text-[#A0AEC0]">{m.sub}</p>
                   </div>
@@ -359,7 +369,11 @@ export function LinkedInSection() {
                     key={s.label}
                     className="border-b border-white/[0.06] p-6 last:border-b-0 sm:border-e sm:last:border-e-0 lg:border-e lg:border-white/[0.06] lg:last:border-e-0 [&:nth-child(4)]:lg:border-e-0"
                   >
-                    <p className="text-xs uppercase tracking-[0.08em] text-[#A0AEC0]">{s.label}</p>
+                    <MetricHeadingWithInfo
+                      title={s.label}
+                      hint={METRIC_DESCRIPTIONS[s.label] ?? ""}
+                      titleClassName="text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]"
+                    />
                     <p className="mt-2 text-3xl font-bold leading-none text-white">{s.value}</p>
                     <p className="mt-1 text-sm text-[#A0AEC0]">Telemetry · {timeMetrics.periodLabel}</p>
                   </div>
@@ -370,7 +384,10 @@ export function LinkedInSection() {
 
           <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
             <GlassCard>
-              <h2 className="font-display text-xl font-bold text-white">Activity Overview</h2>
+              <div className="mb-1 flex flex-wrap items-start justify-between gap-2">
+                <h2 className="font-display text-xl font-bold text-white">Activity Overview</h2>
+                <CardInfoTip subject="Activity Overview" text={CHART_CARD_DESCRIPTIONS["Activity Overview"]} />
+              </div>
               <p className="mb-4 mt-1 text-sm text-[#A0AEC0]">
                 Lead generation and outbound volume · {timeMetrics.periodLabel.toLowerCase()}
               </p>
@@ -402,7 +419,10 @@ export function LinkedInSection() {
             </GlassCard>
 
             <GlassCard>
-              <h2 className="font-display text-xl font-bold text-white">Engagement trend</h2>
+              <div className="mb-1 flex flex-wrap items-start justify-between gap-2">
+                <h2 className="font-display text-xl font-bold text-white">Engagement trend</h2>
+                <CardInfoTip subject="Engagement trend" text={CHART_CARD_DESCRIPTIONS["Engagement trend"]} />
+              </div>
               <p className="mb-4 mt-1 text-sm text-[#A0AEC0]">
                 Native impressions + interactions by bucket · {timeMetrics.periodLabel.toLowerCase()}
               </p>
@@ -636,7 +656,11 @@ export function LinkedInSection() {
                   { label: "Reply Rate", value: `${Math.max(5, Math.round((selectedCampaign.replies / Math.max(1, selectedCampaign.invited)) * 100))}%` },
                 ].map((k) => (
                   <div key={k.label} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3">
-                    <p className="text-xs uppercase tracking-[0.08em] text-[#A0AEC0]">{k.label}</p>
+                    <MetricHeadingWithInfo
+                      title={k.label}
+                      hint={METRIC_DESCRIPTIONS[k.label] ?? ""}
+                      titleClassName="text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]"
+                    />
                     <p className="mt-2 text-2xl font-bold text-white">{k.value}</p>
                   </div>
                 ))}

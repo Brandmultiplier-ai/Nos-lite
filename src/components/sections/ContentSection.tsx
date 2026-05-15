@@ -1,12 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CardInfoTip } from "@/components/ui/CardInfoTip";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { IntegrationStrip } from "@/components/ui/IntegrationStrip";
 import { SimpleStatCard } from "@/components/ui/SimpleStatCard";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useDashboard } from "@/context/DashboardContext";
+import { CHART_CARD_DESCRIPTIONS, METRIC_DESCRIPTIONS } from "@/data/metricDescriptions";
 import { HiOutlineX } from "react-icons/hi";
 
 interface LinkedInDraft {
@@ -106,14 +108,20 @@ export function ContentSection() {
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {content.stats.map((stat) => (
-          <SimpleStatCard key={stat.label} label={stat.label} value={stat.value} />
+          <SimpleStatCard key={stat.label} label={stat.label} value={stat.value} info={METRIC_DESCRIPTIONS[stat.label]} />
         ))}
       </div>
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
         <GlassCard className="xl:col-span-1">
-          <div className="mb-4 flex items-center justify-between gap-2">
-            <h2 className="font-display text-xl font-bold text-white">LinkedIn Content Calendar</h2>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="font-display text-xl font-bold text-white">LinkedIn Content Calendar</h2>
+              <CardInfoTip
+                subject="LinkedIn Content Calendar"
+                text={CHART_CARD_DESCRIPTIONS["LinkedIn Content Calendar"]}
+              />
+            </div>
             <button
               type="button"
               onClick={() => openComposer(selectedDay ?? 1)}
@@ -193,9 +201,15 @@ export function ContentSection() {
         </GlassCard>
 
         <GlassCard className="xl:col-span-2">
-          <h2 className="mb-4 font-display text-xl font-bold text-white">
-            Content Performance
-          </h2>
+          <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
+            <h2 className="font-display text-xl font-bold text-white">
+              Content Performance
+            </h2>
+            <CardInfoTip
+              subject="Content Performance"
+              text={CHART_CARD_DESCRIPTIONS["Content Performance"]}
+            />
+          </div>
           {filteredRows.length === 0 ? (
             <EmptyState message="No content to show." />
           ) : (

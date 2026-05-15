@@ -1,3 +1,4 @@
+import { CardInfoTip } from "@/components/ui/CardInfoTip";
 import { GlassCard } from "@/components/ui/GlassCard";
 import type { KpiStat } from "@/types/nos";
 import type { IconType } from "react-icons";
@@ -17,19 +18,23 @@ const iconMap: Record<KpiStat["iconColor"], { Icon: IconType; bg: string }> = {
 
 interface StatCardProps {
   stat: KpiStat;
+  info?: string;
 }
 
-export function StatCard({ stat }: StatCardProps) {
+export function StatCard({ stat, info }: StatCardProps) {
   const { Icon, bg } = iconMap[stat.iconColor];
   const positive = stat.change >= 0;
 
   return (
     <GlassCard padding="md" className="min-h-[110px]">
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.1em] text-[#A0AEC0]">
-            {stat.label}
-          </p>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <p className="min-w-0 flex-1 text-xs font-semibold uppercase tracking-[0.1em] text-[#A0AEC0]">
+              {stat.label}
+            </p>
+            {info?.trim() ? <CardInfoTip subject={stat.label} text={info} /> : null}
+          </div>
           <p className="mt-2 font-display text-[30px] font-bold leading-none text-white">
             {stat.value}
           </p>

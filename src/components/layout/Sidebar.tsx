@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { getWorkspaceSwitcherDisplay } from "@/data/anonymousWorkspace";
 import { navItems, workspaceList } from "@/data/nosData";
 import { useDashboard } from "@/context/DashboardContext";
 import { useAuth } from "@/context/AuthContext";
@@ -35,7 +36,7 @@ export function Sidebar() {
   const [accountOpen, setAccountOpen] = useState(false);
   const workspaceWrapRef = useRef<HTMLDivElement>(null);
 
-  const currentWs = workspaceList.find((w) => w.id === workspaceId) ?? workspaceList[0];
+  const currentWs = getWorkspaceSwitcherDisplay(workspaceId);
 
   useEffect(() => {
     function handlePointerDown(e: MouseEvent) {
@@ -94,6 +95,7 @@ export function Sidebar() {
             </p>
             {workspaceList.map((ws) => {
               const active = workspaceId === ws.id;
+              const row = getWorkspaceSwitcherDisplay(ws.id as WorkspaceId);
               return (
                 <button
                   key={ws.id}
@@ -112,13 +114,13 @@ export function Sidebar() {
                 >
                   <span
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-white"
-                    style={{ backgroundColor: ws.avatarColor }}
+                    style={{ backgroundColor: row.avatarColor }}
                   >
-                    {ws.initials}
+                    {row.initials}
                   </span>
                   <span className="min-w-0">
-                    <span className="block truncate font-medium">{ws.name}</span>
-                    <span className="block truncate text-[11px] text-[#718096]">{ws.subtitle}</span>
+                    <span className="block truncate font-medium">{row.name}</span>
+                    <span className="block truncate text-[11px] text-[#718096]">{row.subtitle}</span>
                   </span>
                 </button>
               );

@@ -40,6 +40,13 @@ function formatPagesVisited(memberCount: number, industry: string): string {
   return `${paths} · ${industry}`;
 }
 
+function formatReturnVisitorPct(hotPct: number, peopleLen: number): string {
+  if (peopleLen === 0) return "—";
+  const raw = Math.min(45, 18 + hotPct / 3);
+  const rounded = Math.round(raw * 100) / 100;
+  return Number.isInteger(rounded) ? `${rounded}%` : `${rounded.toFixed(2)}%`;
+}
+
 function buildWebsiteRows(people: NosDemoPerson[]): WebsiteRow[] {
   const byCompany = new Map<string, NosDemoPerson[]>();
   for (const p of people) {
@@ -86,7 +93,7 @@ function buildWebsiteStats(people: NosDemoPerson[], companyCount: number): Websi
     },
     {
       label: "Return Visitors",
-      value: people.length === 0 ? "—" : `${Math.min(45, 18 + hotPct / 3)}%`,
+      value: formatReturnVisitorPct(hotPct, people.length),
     },
   ];
 }

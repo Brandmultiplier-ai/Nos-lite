@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { CardInfoTip, MetricHeadingWithInfo } from "@/components/ui/CardInfoTip";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { IntegrationStrip } from "@/components/ui/IntegrationStrip";
 import { SimpleStatCard } from "@/components/ui/SimpleStatCard";
@@ -27,6 +28,7 @@ import {
   YAxis,
 } from "recharts";
 import { axisStyle, chartGridStroke, tooltipContentStyle } from "@/components/charts/chartTheme";
+import { CHART_CARD_DESCRIPTIONS, METRIC_DESCRIPTIONS } from "@/data/metricDescriptions";
 import type { WebsiteRow } from "@/types/nos";
 
 type WebsiteView = "overview" | "person-visitors" | "company-visitors";
@@ -272,6 +274,7 @@ export function WebsiteSignalsSection() {
             key={stat.label}
             label={stat.label}
             value={stat.value}
+            info={METRIC_DESCRIPTIONS[stat.label]}
             className="border-white/[0.08] bg-gradient-to-br from-[#1A1734]/78 via-[#11172f]/82 to-[#090c16]/90 backdrop-blur-md"
           />
         ))}
@@ -280,7 +283,11 @@ export function WebsiteSignalsSection() {
       <GlassCard className={`${darkGradientGlass} p-0`}>
         <div className="grid grid-cols-1 gap-3 p-4 md:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-[#4940c6]/20 bg-gradient-to-br from-[#2C2359]/82 via-[#1A1D3E]/86 to-[#0C101C]/92 p-4 backdrop-blur-md">
-            <p className="text-xs uppercase tracking-[0.08em] text-[#D6D0FF]">Visitor traffic</p>
+            <MetricHeadingWithInfo
+              title="Visitor traffic"
+              hint={METRIC_DESCRIPTIONS["Visitor traffic"]}
+              titleClassName="text-xs uppercase tracking-[0.08em] text-[#D6D0FF]"
+            />
             <p className="mt-2 text-3xl font-bold text-white">{dashboardMetrics.visitors}</p>
             <p className="mt-1 flex items-center gap-1 text-xs text-[#E1DEFF]">
               <HiOutlineTrendingUp className="h-3.5 w-3.5" />
@@ -288,19 +295,31 @@ export function WebsiteSignalsSection() {
             </p>
           </div>
           <div className="rounded-2xl border border-[#4940c6]/18 bg-gradient-to-br from-[#25214F]/84 via-[#181B39]/86 to-[#0A0D18]/92 p-4 backdrop-blur-md">
-            <p className="text-xs uppercase tracking-[0.08em] text-[#C9D8FF]">Company pulse</p>
+            <MetricHeadingWithInfo
+              title="Company pulse"
+              hint={METRIC_DESCRIPTIONS["Company pulse"]}
+              titleClassName="text-xs uppercase tracking-[0.08em] text-[#C9D8FF]"
+            />
             <p className="mt-2 text-3xl font-bold text-white">{dashboardMetrics.accounts}</p>
             <p className="mt-1 text-xs text-[#D4E0FF]">
               {dashboardMetrics.hotCount} hot · {dashboardMetrics.warmCount} warm
             </p>
           </div>
           <div className="rounded-2xl border border-[#4940c6]/16 bg-gradient-to-br from-[#1F2145]/84 via-[#131B35]/88 to-[#090C17]/94 p-4 backdrop-blur-md">
-            <p className="text-xs uppercase tracking-[0.08em] text-[#BDD0FF]">Average signal</p>
+            <MetricHeadingWithInfo
+              title="Average signal"
+              hint={METRIC_DESCRIPTIONS["Average signal"]}
+              titleClassName="text-xs uppercase tracking-[0.08em] text-[#BDD0FF]"
+            />
             <p className="mt-2 text-3xl font-bold text-white">{dashboardMetrics.avgScore}</p>
             <p className="mt-1 text-xs text-[#C8D7FF]">Intent score across visible accounts</p>
           </div>
           <div className="rounded-2xl border border-[#4940c6]/14 bg-gradient-to-br from-[#1D1F3F]/82 via-[#11172d]/88 to-[#080B14]/94 p-4 backdrop-blur-md">
-            <p className="text-xs uppercase tracking-[0.08em] text-[#D0D2FF]">Session depth</p>
+            <MetricHeadingWithInfo
+              title="Session depth"
+              hint={METRIC_DESCRIPTIONS["Session depth"]}
+              titleClassName="text-xs uppercase tracking-[0.08em] text-[#D0D2FF]"
+            />
             <p className="mt-2 text-3xl font-bold text-white">{dashboardMetrics.avgPages}</p>
             <p className="mt-1 text-xs text-[#DBDCFF]">Average pages viewed per person</p>
           </div>
@@ -309,12 +328,15 @@ export function WebsiteSignalsSection() {
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         <GlassCard className={darkGradientGlass}>
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
             <h3 className="font-display text-lg font-bold text-white">Visitor Trend</h3>
-            <span className="inline-flex items-center gap-1 rounded-lg border border-[#4940c6]/25 bg-[#4940c6]/12 px-2 py-1 text-xs text-[#D8CEFF]">
-              <HiOutlineEye className="h-3.5 w-3.5" />
-              Weekly
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-lg border border-[#4940c6]/25 bg-[#4940c6]/12 px-2 py-1 text-xs text-[#D8CEFF]">
+                <HiOutlineEye className="h-3.5 w-3.5" />
+                Weekly
+              </span>
+              <CardInfoTip subject="Visitor Trend" text={CHART_CARD_DESCRIPTIONS["Visitor Trend"]} />
+            </div>
           </div>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={visitorsTrend} margin={{ left: -10, right: 10, top: 10, bottom: 0 }}>
@@ -334,12 +356,15 @@ export function WebsiteSignalsSection() {
           </ResponsiveContainer>
         </GlassCard>
         <GlassCard className={darkGradientGlass}>
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
             <h3 className="font-display text-lg font-bold text-white">Intent Wave</h3>
-            <span className="inline-flex items-center gap-1 rounded-lg border border-[#4940c6]/25 bg-[#4940c6]/12 px-2 py-1 text-xs text-[#D8CEFF]">
-              <HiOutlineChartBar className="h-3.5 w-3.5" />
-              Hot vs Warm
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-lg border border-[#4940c6]/25 bg-[#4940c6]/12 px-2 py-1 text-xs text-[#D8CEFF]">
+                <HiOutlineChartBar className="h-3.5 w-3.5" />
+                Hot vs Warm
+              </span>
+              <CardInfoTip subject="Intent Wave" text={CHART_CARD_DESCRIPTIONS["Intent Wave"]} />
+            </div>
           </div>
           <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={intentWave} margin={{ left: -10, right: 10, top: 10, bottom: 0 }}>
@@ -367,17 +392,29 @@ export function WebsiteSignalsSection() {
           <GlassCard className={darkGradientGlass}>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div className="rounded-2xl border border-[#4940c6]/14 bg-gradient-to-br from-[#221F45]/84 via-[#171A37]/88 to-[#0A0D18]/92 p-4">
-                <p className="text-xs uppercase tracking-[0.08em] text-[#A0AEC0]">Tracked people</p>
+                <MetricHeadingWithInfo
+                  title="Tracked people"
+                  hint={METRIC_DESCRIPTIONS["Tracked people"]}
+                  titleClassName="text-xs uppercase tracking-[0.08em] text-[#A0AEC0]"
+                />
                 <p className="mt-2 text-3xl font-bold text-white">{filteredPeople.length}</p>
                 <p className="mt-1 text-xs text-[#A0AEC0]">Person-level visitors currently visible</p>
               </div>
               <div className="rounded-2xl border border-[#4940c6]/14 bg-gradient-to-br from-[#1F1C3E]/84 via-[#151830]/88 to-[#090C17]/92 p-4">
-                <p className="text-xs uppercase tracking-[0.08em] text-[#A0AEC0]">Tracked companies</p>
+                <MetricHeadingWithInfo
+                  title="Tracked companies"
+                  hint={METRIC_DESCRIPTIONS["Tracked companies"]}
+                  titleClassName="text-xs uppercase tracking-[0.08em] text-[#A0AEC0]"
+                />
                 <p className="mt-2 text-3xl font-bold text-white">{filteredCompanies.length}</p>
                 <p className="mt-1 text-xs text-[#A0AEC0]">Company-level visitor records</p>
               </div>
               <div className="rounded-2xl border border-[#4940c6]/14 bg-gradient-to-br from-[#1B1A37]/84 via-[#12172D]/88 to-[#080B14]/92 p-4">
-                <p className="text-xs uppercase tracking-[0.08em] text-[#A0AEC0]">High-intent (Hot)</p>
+                <MetricHeadingWithInfo
+                  title="High-intent (Hot)"
+                  hint={METRIC_DESCRIPTIONS["High-intent (Hot)"]}
+                  titleClassName="text-xs uppercase tracking-[0.08em] text-[#A0AEC0]"
+                />
                 <p className="mt-2 text-3xl font-bold text-white">
                   {filteredCompanies.filter((row) => row.status === "Hot").length}
                 </p>

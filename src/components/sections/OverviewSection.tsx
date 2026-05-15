@@ -3,6 +3,7 @@
 import { ChannelBarChart } from "@/components/charts/ChannelBarChart";
 import { SignalAreaChart } from "@/components/charts/SignalAreaChart";
 import { axisStyle, chartGridStroke, tooltipContentStyle } from "@/components/charts/chartTheme";
+import { CardInfoTip } from "@/components/ui/CardInfoTip";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { ChannelBadge } from "@/components/ui/ChannelBadge";
 import { StatCard } from "@/components/ui/StatCard";
@@ -21,6 +22,7 @@ import {
   Bar,
 } from "recharts";
 import type { ChannelPulseMetric } from "@/types/nos";
+import { CHART_CARD_DESCRIPTIONS, METRIC_DESCRIPTIONS, pulseGridCardHint } from "@/data/metricDescriptions";
 import { useMemo, useId } from "react";
 
 function insightAccent(channel: string): string {
@@ -114,7 +116,13 @@ export function OverviewSection() {
 
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-12">
           <div className="md:col-span-5">
-            <p className="text-xs uppercase tracking-[0.1em] text-[#A0AEC0]">Channel footprint</p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs uppercase tracking-[0.1em] text-[#A0AEC0]">Channel footprint</p>
+              <CardInfoTip
+                subject="Channel footprint"
+                text="Each bar’s width is the modeled share of gross volume for that motion — a quick mix read before drilling into tables."
+              />
+            </div>
             <div className="mt-4 space-y-2">
               {inferredMix.map((row) => (
                 <div key={row.channel} className="flex items-center gap-3 text-sm">
@@ -148,26 +156,34 @@ export function OverviewSection() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <p className="mt-4 text-[11px] uppercase tracking-[0.12em] text-[#6B758E]">
-              Synthetic momentum · Total channel volume pacing
-            </p>
+            <div className="mt-4 flex items-center justify-between gap-2">
+              <p className="text-[11px] uppercase tracking-[0.12em] text-[#6B758E]">
+                Synthetic momentum · Total channel volume pacing
+              </p>
+              <CardInfoTip subject="Synthetic momentum" text={CHART_CARD_DESCRIPTIONS["Synthetic momentum"]} />
+            </div>
           </div>
         </div>
       </GlassCard>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {overview.kpis.map((kpi) => (
-          <StatCard key={kpi.label} stat={kpi} />
+          <StatCard key={kpi.label} stat={kpi} info={METRIC_DESCRIPTIONS[kpi.label]} />
         ))}
       </div>
 
       {narratives.length > 0 && (
         <GlassCard>
-          <div className="mb-6">
-            <h2 className="font-display text-xl font-bold text-white">Operational narratives</h2>
-            <p className="mt-1 max-w-2xl text-sm text-[#A0AEC0]">
-              Short reads on mix, intent, and hygiene — generated from live demo cohorts.
-            </p>
+          <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0 max-w-2xl">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="font-display text-xl font-bold text-white">Operational narratives</h2>
+                <CardInfoTip subject="Operational narratives" text={CHART_CARD_DESCRIPTIONS["Operational narratives"]} />
+              </div>
+              <p className="mt-1 text-sm text-[#A0AEC0]">
+                Short reads on mix, intent, and hygiene — generated from live demo cohorts.
+              </p>
+            </div>
           </div>
           <div className="flex snap-x gap-4 overflow-x-auto pb-3">
             {narratives.map((n) => (
@@ -175,14 +191,20 @@ export function OverviewSection() {
                 key={n.id}
                 className={`min-w-[240px] max-w-[300px] flex-none snap-start rounded-2xl border bg-gradient-to-b p-5 ${insightAccent(n.channel)}`}
               >
-                <div className="mb-4 flex flex-wrap items-center gap-2">
-                  {n.channel === "Mixed" ? (
-                    <span className="rounded-full bg-white/[0.08] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/80">
-                      Mixed motions
-                    </span>
-                  ) : (
-                    <ChannelBadge channel={n.channel as "Website" | "LinkedIn" | "Email" | "Content"} />
-                  )}
+                <div className="mb-4 flex items-start justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {n.channel === "Mixed" ? (
+                      <span className="rounded-full bg-white/[0.08] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/80">
+                        Mixed motions
+                      </span>
+                    ) : (
+                      <ChannelBadge channel={n.channel as "Website" | "LinkedIn" | "Email" | "Content"} />
+                    )}
+                  </div>
+                  <CardInfoTip
+                    subject={n.headline}
+                    text="Interpretive read generated from modeled mix and hygiene signals — use to steer weekly reviews."
+                  />
                 </div>
                 <h3 className="font-semibold leading-snug text-white">{n.headline}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-[#B8C7E8]">{n.body}</p>
@@ -194,9 +216,14 @@ export function OverviewSection() {
 
       {crossWeekly.length > 0 && (
         <GlassCard>
-          <div className="mb-6">
-            <h2 className="font-display text-xl font-bold text-white">Cross-channel ingestion</h2>
-            <p className="mt-1 text-sm text-[#A0AEC0]">Stacked weekly signals across outbound + inbound surfaces</p>
+          <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="font-display text-xl font-bold text-white">Cross-channel ingestion</h2>
+                <CardInfoTip subject="Cross-channel ingestion" text={CHART_CARD_DESCRIPTIONS["Cross-channel ingestion"]} />
+              </div>
+              <p className="mt-1 text-sm text-[#A0AEC0]">Stacked weekly signals across outbound + inbound surfaces</p>
+            </div>
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={crossWeekly} margin={{ left: -8, right: 8, top: 12, bottom: 12 }}>
@@ -234,13 +261,19 @@ export function OverviewSection() {
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         <GlassCard>
-          <h2 className="mb-1 font-display text-xl font-bold text-white">Channel pulse grid</h2>
+          <div className="mb-1 flex flex-wrap items-start justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="font-display text-xl font-bold text-white">Channel pulse grid</h2>
+              <CardInfoTip subject="Channel pulse grid" text={CHART_CARD_DESCRIPTIONS["Channel pulse grid"]} />
+            </div>
+          </div>
           <p className="mb-6 text-sm text-[#A0AEC0]">Qualified lift vs ingest — where urgency clusters</p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {pulsesToShow.map((row) => (
               <div key={row.channel} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
-                <div className="mb-3">
+                <div className="mb-3 flex items-start justify-between gap-2">
                   <ChannelBadge channel={row.channel as "Website" | "LinkedIn" | "Email" | "Content"} />
+                  <CardInfoTip subject={`${row.channel} pulse`} text={pulseGridCardHint(row.channel)} />
                 </div>
                 <dl className="grid grid-cols-2 gap-3 text-xs text-[#A0AEC0]">
                   <div>
@@ -259,9 +292,17 @@ export function OverviewSection() {
         </GlassCard>
 
         <GlassCard>
-          <div className="mb-6">
-            <h2 className="font-display text-xl font-bold text-white">Qualification & raw scale</h2>
-            <p className="mt-1 text-sm text-[#A0AEC0]">Two lenses: conversion ratio (%) and normalized ingest</p>
+          <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="font-display text-xl font-bold text-white">Qualification & raw scale</h2>
+                <CardInfoTip
+                  subject="Qualification & raw scale"
+                  text={CHART_CARD_DESCRIPTIONS["Qualification & raw scale"]}
+                />
+              </div>
+              <p className="mt-1 text-sm text-[#A0AEC0]">Two lenses: conversion ratio (%) and normalized ingest</p>
+            </div>
           </div>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={engagementRatioSeries} margin={{ top: 16, left: -8, right: 8, bottom: 0 }}>
@@ -294,23 +335,35 @@ export function OverviewSection() {
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
         <GlassCard className="xl:col-span-2">
-          <div className="mb-4 flex items-start justify-between">
-            <div>
-              <h2 className="font-display text-xl font-bold text-white">Signal throughput</h2>
+          <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <h2 className="font-display text-xl font-bold text-white">Signal throughput</h2>
+                <CardInfoTip
+                  subject="Signal throughput"
+                  text={CHART_CARD_DESCRIPTIONS["Signal throughput"]}
+                />
+              </div>
               <p className="mt-1 text-sm text-[#01B574]">{overview.signalGrowth}</p>
             </div>
           </div>
           <SignalAreaChart key={workspaceId} data={overview.signalChart} />
         </GlassCard>
         <GlassCard>
-          <h2 className="mb-4 font-display text-xl font-bold text-white">Channel breakdown</h2>
+          <div className="mb-4 flex items-start justify-between gap-2">
+            <h2 className="font-display text-xl font-bold text-white">Channel breakdown</h2>
+            <CardInfoTip subject="Channel breakdown" text={CHART_CARD_DESCRIPTIONS["Channel breakdown"]} />
+          </div>
           <ChannelBarChart key={workspaceId} data={overview.channelBreakdown} />
         </GlassCard>
       </div>
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         <GlassCard>
-          <h2 className="mb-4 font-display text-xl font-bold text-white">Active signal feed</h2>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-display text-xl font-bold text-white">Active signal feed</h2>
+            <CardInfoTip subject="Active signal feed" text={CHART_CARD_DESCRIPTIONS["Active signal feed"]} />
+          </div>
           {filteredFeed.length === 0 ? (
             <EmptyState message="No signals to show." />
           ) : (
@@ -344,7 +397,10 @@ export function OverviewSection() {
         </GlassCard>
 
         <GlassCard>
-          <h2 className="mb-4 font-display text-xl font-bold text-white">Funnel progression</h2>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-display text-xl font-bold text-white">Funnel progression</h2>
+            <CardInfoTip subject="Funnel progression" text={CHART_CARD_DESCRIPTIONS["Funnel progression"]} />
+          </div>
           <div className="space-y-5">
             {overview.funnel.map((step) => (
               <div key={step.label}>

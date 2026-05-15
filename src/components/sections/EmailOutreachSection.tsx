@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { axisStyle, chartGridStroke, tooltipContentStyle } from "@/components/charts/chartTheme";
 import { EmailBarChart } from "@/components/charts/EmailBarChart";
+import { CardInfoTip, MetricHeadingWithInfo } from "@/components/ui/CardInfoTip";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { IntegrationStrip } from "@/components/ui/IntegrationStrip";
 import { SimpleStatCard } from "@/components/ui/SimpleStatCard";
@@ -20,6 +21,7 @@ import { useDashboard } from "@/context/DashboardContext";
 import type { AnalyticsPeriodId, EmailCampaignRow, EmailContactRow } from "@/types/nos";
 import { HiOutlineChevronRight, HiOutlineX } from "react-icons/hi";
 import { useEffect, useMemo, useState } from "react";
+import { CHART_CARD_DESCRIPTIONS, METRIC_DESCRIPTIONS, emailCampaignInsightHint } from "@/data/metricDescriptions";
 
 type EmailView = "overview" | "campaigns" | "contacts";
 
@@ -190,19 +192,40 @@ export function EmailOutreachSection() {
         <>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
             {effectiveStats.map((stat) => (
-              <SimpleStatCard key={`${workspaceId}-${timeWindow}-${stat.label}`} label={stat.label} value={stat.value} />
+              <SimpleStatCard
+                key={`${workspaceId}-${timeWindow}-${stat.label}`}
+                label={stat.label}
+                value={stat.value}
+                info={METRIC_DESCRIPTIONS[stat.label]}
+              />
             ))}
           </div>
 
           <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
             <GlassCard>
-              <h2 className="mb-1 font-display text-xl font-bold text-white">Send volume vs replies</h2>
+              <div className="mb-1 flex flex-wrap items-start justify-between gap-3">
+                <h2 className="font-display text-xl font-bold text-white">Send volume vs replies</h2>
+                <CardInfoTip subject="Send volume vs replies" text={CHART_CARD_DESCRIPTIONS["Send volume vs replies"]} />
+              </div>
               <p className="mb-4 text-sm text-[#A0AEC0]">Weekly buckets · {periodLabel}</p>
               <EmailBarChart key={`${workspaceId}-${timeWindow}`} data={effectiveWeekly} />
             </GlassCard>
             <GlassCard>
-              <h2 className="mb-1 font-display text-xl font-bold text-white">Sequence health snapshot</h2>
-              <p className="mb-4 text-sm text-[#A0AEC0]">{effectiveSequences.filter((s) => s.status === "Active").length} active sequences · blended open/reply deltas</p>
+              <div className="mb-1 flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="font-display text-xl font-bold text-white">Sequence health snapshot</h2>
+                    <CardInfoTip
+                      subject="Sequence health snapshot"
+                      text={CHART_CARD_DESCRIPTIONS["Sequence health snapshot"]}
+                    />
+                  </div>
+                  <p className="mb-4 mt-1 text-sm text-[#A0AEC0]">
+                    {effectiveSequences.filter((s) => s.status === "Active").length} active sequences · blended
+                    open/reply deltas
+                  </p>
+                </div>
+              </div>
               <ResponsiveContainer width="100%" height={260}>
                 <AreaChart data={effectiveWeekly} margin={{ left: -8, right: 8, top: 6, bottom: 0 }}>
                   <defs>
@@ -227,7 +250,10 @@ export function EmailOutreachSection() {
           </div>
 
           <GlassCard>
-            <h2 className="mb-4 font-display text-xl font-bold text-white">Active sequences</h2>
+            <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
+              <h2 className="font-display text-xl font-bold text-white">Active sequences</h2>
+              <CardInfoTip subject="Active sequences" text={CHART_CARD_DESCRIPTIONS["Active sequences"]} />
+            </div>
             {effectiveSequences.length === 0 ? (
               <EmptyState message="No sequences to show." />
             ) : (
@@ -268,9 +294,12 @@ export function EmailOutreachSection() {
         <div className="space-y-5">
           <GlassCard>
             <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div>
-                <h2 className="font-display text-xl font-bold text-white">Campaign cockpit</h2>
-                <p className="mt-1 text-sm text-[#A0AEC0]">Mailbox pools + Instantly ladders · {periodLabel}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <div>
+                  <h2 className="font-display text-xl font-bold text-white">Campaign cockpit</h2>
+                  <p className="mt-1 text-sm text-[#A0AEC0]">Mailbox pools + Instantly ladders · {periodLabel}</p>
+                </div>
+                <CardInfoTip subject="Campaign cockpit" text={CHART_CARD_DESCRIPTIONS["Campaign cockpit"]} />
               </div>
               <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
                 <div className="inline-flex flex-wrap gap-2 rounded-xl border border-white/[0.08] bg-black/25 p-1">
@@ -364,7 +393,11 @@ export function EmailOutreachSection() {
                   { label: "Meetings", value: String(selectedCampaign.meetingsBooked) },
                 ].map((row) => (
                   <div key={row.label} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3">
-                    <p className="text-xs uppercase tracking-[0.08em] text-[#A0AEC0]">{row.label}</p>
+                    <MetricHeadingWithInfo
+                      title={row.label}
+                      hint={emailCampaignInsightHint(row.label) ?? "Modeled email signal for this campaign slice."}
+                      titleClassName="text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]"
+                    />
                     <p className="mt-2 text-xl font-bold text-white">{row.value}</p>
                   </div>
                 ))}
