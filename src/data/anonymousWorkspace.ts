@@ -22,7 +22,6 @@ export function getWorkspaceSwitcherDisplay(id: WorkspaceId) {
   return {
     id,
     name: anon.name,
-    subtitle: base.subtitle,
     initials: anon.initials,
     avatarColor: base.avatarColor,
   };

@@ -73,7 +73,6 @@ export function Sidebar() {
           </span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-sm font-semibold text-white">{currentWs.name}</span>
-            <span className="block truncate text-[11px] text-[#A0AEC0]">{currentWs.subtitle}</span>
           </span>
           <HiOutlineChevronDown
             className={`h-4 w-4 shrink-0 text-[#A0AEC0] transition ${workspaceMenuOpen ? "rotate-180" : ""}`}
@@ -115,7 +114,6 @@ export function Sidebar() {
                   </span>
                   <span className="min-w-0">
                     <span className="block truncate font-medium">{row.name}</span>
-                    <span className="block truncate text-[11px] text-[#718096]">{row.subtitle}</span>
                   </span>
                 </button>
               );
