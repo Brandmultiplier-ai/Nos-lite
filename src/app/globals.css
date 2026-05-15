@@ -1,26 +1,128 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand palette (required) */
+  --brand-primary: #4940c6;
+  --brand-primary-dark: #3a32a0;
+  --brand-accent: #f36901;
+  --brand-black: #000000;
+  --brand-white: #ffffff;
+
+  --nos-bg: #000000;
+  --nos-bg-elevated: #0a0a0a;
+  --nos-surface: #111111;
+  --nos-surface-soft: #161616;
+  --nos-sidebar: #050505;
+  --nos-primary: #4940c6;
+  --nos-primary-dark: #3a32a0;
+  --nos-accent: #f36901;
+  --nos-green: #01b574;
+  --nos-red: #ee5d50;
+  --nos-cyan: #00d4ff;
+  --nos-text: #ffffff;
+  --nos-muted: #a0aec0;
+  --nos-faint: #718096;
+  --nos-border-subtle: rgba(255, 255, 255, 0.08);
+  --nos-border-strong: rgba(255, 255, 255, 0.14);
+  --nos-shadow-soft: 0 18px 32px rgba(0, 0, 0, 0.4);
+  --nos-shadow-focus: 0 0 0 1px rgba(73, 64, 198, 0.45);
+  --nos-shadow-glow: 0 10px 32px rgba(73, 64, 198, 0.22);
+  --nos-shadow-accent: 0 8px 24px rgba(243, 105, 1, 0.18);
+  --nos-radius-xl: 16px;
+  --nos-radius-2xl: 20px;
+  --nos-radius-3xl: 24px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: var(--font-plus-jakarta-display);
+  --font-sans: var(--font-plus-jakarta-text);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--nos-bg);
+  color: var(--nos-text);
+  font-family: var(--font-plus-jakarta-text), system-ui, sans-serif;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: var(--font-plus-jakarta-display), system-ui, sans-serif;
+}
+
+.nos-surface-card {
+  border: 1px solid var(--nos-border-subtle);
+  background:
+    radial-gradient(140% 150% at 0% 0%, rgba(73, 64, 198, 0.14) 0%, rgba(73, 64, 198, 0.04) 34%, rgba(0, 0, 0, 0) 62%),
+    linear-gradient(165deg, rgba(14, 14, 18, 0.95) 0%, rgba(8, 8, 10, 0.97) 56%, rgba(0, 0, 0, 0.98) 100%);
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+}
+
+.nos-table-wrap {
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  background: rgba(11, 20, 55, 0.46);
+}
+
+.nos-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.nos-table thead tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--nos-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.625rem;
+}
+
+.nos-table th {
+  padding: 0.8rem 1rem;
+  font-weight: 600;
+}
+
+.nos-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nos-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.nos-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.nos-scrollbar::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+.nos-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.nos-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(160, 174, 192, 0.26);
+  border-radius: 999px;
+}
+
+::selection {
+  background: rgba(73, 64, 198, 0.45);
+  color: var(--brand-white);
+}
+
+.recharts-wrapper:focus {
+  outline: none;
 }
