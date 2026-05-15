@@ -19,6 +19,7 @@ import {
   HiOutlineUserGroup,
 } from "react-icons/hi";
 import type { IconType } from "react-icons";
+import { NarrativeOsLogo } from "@/components/branding/NarrativeOsLogo";
 
 const sectionIcons: Record<SectionId, IconType> = {
   overview: HiOutlineChartPie,
@@ -52,17 +53,11 @@ export function Sidebar() {
 
   return (
     <aside className="fixed left-0 top-0 z-30 flex h-screen w-[250px] flex-col border-r border-white/[0.08] bg-gradient-to-b from-[#141126]/95 via-[#0D1225]/95 to-[#06090F]/96 px-4 py-6 shadow-[12px_0_40px_rgba(0,0,0,0.42)] backdrop-blur-xl">
-      <div className="mb-6 flex items-start gap-2 px-2">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#3a32a0] to-[#4940c6] font-display text-lg font-bold text-white shadow-[0_8px_20px_rgba(73,64,198,0.4)]">
-          B
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-lg font-bold tracking-tight text-white">BrandMultiplier</p>
-          <p className="truncate text-[11px] text-[#A0AEC0]">NOS workspace</p>
-        </div>
+      <div className="mb-6">
+        <NarrativeOsLogo size="sidebar" />
       </div>
 
-      <div ref={workspaceWrapRef} className="relative mb-6 px-2">
+      <div ref={workspaceWrapRef} className="relative mb-6">
         <button
           type="button"
           onClick={() => setWorkspaceMenuOpen((o) => !o)}

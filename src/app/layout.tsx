@@ -15,9 +15,8 @@ const plusJakartaText = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "NOS Dashboard | BrandMultiplier",
-  description:
-    "Narrative Operating System — BrandMultiplier demo dashboard",
+  title: "Narrative OS · BrandMultiplier",
+  description: "Narrative OS — operating layer for GTM signals. Demo workspace by BrandMultiplier.",
 };
 
 export default function RootLayout({

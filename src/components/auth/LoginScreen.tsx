@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { NarrativeOsLogo } from "@/components/branding/NarrativeOsLogo";
 import { useAuth } from "@/context/AuthContext";
 
 export function LoginScreen() {
-  const { login, profile } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -28,12 +29,10 @@ export function LoginScreen() {
       </div>
       <form
         onSubmit={handleSubmit}
-        className="relative w-full max-w-[420px] rounded-2xl border border-white/[0.09] bg-gradient-to-br from-[#15122b]/95 via-[#0c1028]/94 to-[#06080f]/95 p-8 shadow-[0_24px_60px_rgba(0,0,0,0.55)]"
+        className="relative w-full max-w-[420px] rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 shadow-none backdrop-blur-xl supports-[backdrop-filter]:bg-white/[0.03]"
       >
-        <div className="mb-8 text-center">
-          <p className="font-display text-2xl font-bold tracking-tight">BrandMultiplier</p>
-          <p className="mt-2 text-xs uppercase tracking-[0.16em] text-[#A0AEC0]">Demo sign in</p>
-          <p className="mt-3 text-[11px] text-[#6B758E]">Use the credentials supplied for staging access.</p>
+        <div className="mb-10 flex justify-center">
+          <NarrativeOsLogo size="hero" />
         </div>
 
         <div className="space-y-4">
@@ -49,7 +48,7 @@ export function LoginScreen() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your@workspace.com"
-              className="mt-1 w-full rounded-lg border border-white/[0.14] bg-black/40 px-3 py-2.5 text-sm text-white outline-none placeholder:text-[#5C678A] focus:border-[#4940c6]"
+              className="mt-1 w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none backdrop-blur-sm placeholder:text-[#5C678A] focus:border-[#4940c6]/60"
             />
           </div>
           <div>
@@ -73,7 +72,7 @@ export function LoginScreen() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-white/[0.14] bg-black/40 px-3 py-2.5 text-sm text-white outline-none focus:border-[#4940c6]"
+              className="mt-1 w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-sm text-white outline-none backdrop-blur-sm focus:border-[#4940c6]/60"
             />
           </div>
         </div>
@@ -87,13 +86,6 @@ export function LoginScreen() {
         >
           {busy ? "Signing in…" : "Log in"}
         </button>
-
-        <p className="mt-8 text-center text-[11px] text-[#5C6689]">
-          Profile after login:{" "}
-          <span className="text-[#A0AEC0]">
-            {profile.displayName} · {profile.workspaceEmail}
-          </span>
-        </p>
       </form>
     </div>
   );

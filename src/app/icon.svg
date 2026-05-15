@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 62" role="img" aria-label="Narrative OS">
+  <defs>
+    <radialGradient id="nosFavCloud" cx="45%" cy="30%" r="72%">
+      <stop offset="0%" stop-color="#c18bff" />
+      <stop offset="48%" stop-color="#9d36ff" />
+      <stop offset="100%" stop-color="#6b24b5" />
+    </radialGradient>
+  </defs>
+  <path
+    fill="url(#nosFavCloud)"
+    stroke="#050508"
+    stroke-width="2.2"
+    stroke-linejoin="round"
+    d="M24 53H72V41A24 24 0 1 1 24 41V53Z"
+  />
+  <g stroke="#050508" stroke-width="1.8" stroke-linecap="round" fill="none">
+    <path d="M48 25v18" />
+    <path d="M36 34c2.6-4 7.2-6 12-6s9.4 2 12 6" />
+    <path d="M35 42.5c3.6-3 8.2-4.5 13-4.5s9.4 1.5 13 4.5" />
+  </g>
+  <circle cx="48" cy="25" r="2.6" fill="#050508" />
+  <circle cx="48" cy="44" r="2.6" fill="#050508" />
+  <circle cx="36" cy="34" r="2.2" fill="#050508" />
+  <circle cx="60" cy="34" r="2.2" fill="#050508" />
+</svg>
