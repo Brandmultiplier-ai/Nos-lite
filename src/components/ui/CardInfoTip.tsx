@@ -1,6 +1,7 @@
 "use client";
 
-import { useId } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 
 interface CardInfoTipProps {
@@ -10,29 +11,207 @@ interface CardInfoTipProps {
   className?: string;
 }
 
+const TIP_Z = 10_000;
+const POINTER_HIDE_MS = 220;
+
+function collectScrollTargets(start: HTMLElement | null): Set<EventTarget> {
+  const targets = new Set<EventTarget>();
+  targets.add(window);
+  let cur = start?.parentElement;
+  while (cur) {
+    const s = getComputedStyle(cur);
+    if (/(auto|scroll|overlay)/.test(s.overflow + s.overflowY + s.overflowX)) {
+      targets.add(cur);
+    }
+    cur = cur.parentElement;
+  }
+  return targets;
+}
+
 export function CardInfoTip({ text, subject = "Metric", className = "" }: CardInfoTipProps) {
+  const wrapRef = useRef<HTMLSpanElement>(null);
+  const tipRef = useRef<HTMLDivElement>(null);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const base = useId().replace(/:/g, "");
   const tipId = `${base}-desc`;
   const label = `${subject} explanation`;
 
-  return (
-    <span className={`group/tip relative inline-flex shrink-0 ${className}`}>
-      <button
-        type="button"
-        className="-m-0.5 rounded-lg p-0.5 text-[#718096] outline-none transition hover:text-[#a0aec0] focus-visible:ring-2 focus-visible:ring-[#4940c6]/55"
-        aria-label={label}
-        aria-describedby={tipId}
-      >
-        <HiOutlineInformationCircle className="h-4 w-4" aria-hidden />
-      </button>
+  const [mounted, setMounted] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+
+  useEffect(() => setMounted(true), []);
+
+  useEffect(
+    () => () => {
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+      }
+    },
+    [],
+  );
+
+  const cancelHide = useCallback(() => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+  }, []);
+
+  const scheduleHide = useCallback(() => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+    hideTimerRef.current = setTimeout(() => setOpen(false), POINTER_HIDE_MS);
+  }, []);
+
+  const show = useCallback(() => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+    setOpen(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!open || !mounted) {
+      setCoords(null);
+      return;
+    }
+
+    function reposition() {
+      const wrap = wrapRef.current;
+      const tip = tipRef.current;
+      if (!wrap || !tip) return;
+
+      const r = wrap.getBoundingClientRect();
+      const tbox = tip.getBoundingClientRect();
+
+      const gutter = 8;
+      let top = r.top - tbox.height - gutter;
+      const placeAbove = top >= gutter;
+      if (!placeAbove) {
+        top = r.bottom + gutter;
+      }
+
+      let left = r.left + r.width / 2 - tbox.width / 2;
+      const vw = window.innerWidth;
+      const maxLeft = Math.max(gutter, vw - tbox.width - gutter);
+      left = Math.min(Math.max(left, gutter), maxLeft);
+
+      setCoords({ top, left });
+    }
+
+    reposition();
+    const raf = requestAnimationFrame(() => reposition());
+
+    const scrollRoots = collectScrollTargets(wrapRef.current);
+    for (const t of scrollRoots) {
+      t.addEventListener("scroll", reposition, { passive: true, capture: true });
+    }
+
+    window.addEventListener("resize", reposition);
+
+    let ro: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(reposition);
+      if (wrapRef.current) ro.observe(wrapRef.current);
+      if (tipRef.current) ro.observe(tipRef.current);
+    }
+
+    return () => {
+      cancelAnimationFrame(raf);
+      for (const t of scrollRoots) {
+        t.removeEventListener("scroll", reposition, true);
+      }
+      window.removeEventListener("resize", reposition);
+      ro?.disconnect();
+    };
+  }, [open, mounted, text]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function onPointerDown(ev: PointerEvent) {
+      const t = ev.target as Node;
+      if (wrapRef.current?.contains(t)) return;
+      if (tipRef.current?.contains(t)) return;
+      cancelHide();
+      setOpen(false);
+    }
+
+    function onKey(ev: KeyboardEvent) {
+      if (ev.key === "Escape") {
+        cancelHide();
+        setOpen(false);
+        wrapRef.current?.querySelector("button")?.dispatchEvent(new FocusEvent("blur"));
+      }
+    }
+
+    document.addEventListener("pointerdown", onPointerDown, true);
+    window.addEventListener("keydown", onKey, true);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown, true);
+      window.removeEventListener("keydown", onKey, true);
+    };
+  }, [cancelHide, open]);
+
+  const handleBlur = useCallback(() => {
+    queueMicrotask(() => {
+      if (!wrapRef.current?.contains(document.activeElement) && !tipRef.current?.contains(document.activeElement)) {
+        if (hideTimerRef.current) {
+          clearTimeout(hideTimerRef.current);
+          hideTimerRef.current = null;
+        }
+        setOpen(false);
+      }
+    });
+  }, []);
+
+  const tipNode =
+    open && mounted && typeof document !== "undefined" ? (
       <span
+        ref={tipRef}
         id={tipId}
         role="tooltip"
-        className="pointer-events-none invisible absolute bottom-[calc(100%+6px)] left-1/2 z-[80] w-56 max-w-[min(14rem,calc(100vw-3rem))] -translate-x-1/2 rounded-lg border border-white/[0.12] bg-[#0c101c]/96 px-3 py-2 text-left text-[11px] font-normal leading-snug text-[#D9E4F8] opacity-0 shadow-[0_16px_40px_rgba(0,0,0,0.55)] backdrop-blur-md transition duration-150 group-focus-within/tip:visible group-focus-within/tip:opacity-100 group-hover/tip:visible group-hover/tip:opacity-100"
+        onPointerEnter={cancelHide}
+        onPointerLeave={scheduleHide}
+        style={{
+          position: "fixed",
+          top: coords?.top ?? -9999,
+          left: coords?.left ?? -9999,
+          zIndex: TIP_Z,
+          visibility: coords ? "visible" : "hidden",
+        }}
+        className="w-56 max-w-[min(14rem,calc(100vw-3rem))] rounded-lg border border-white/[0.12] bg-[#0c101c]/96 px-3 py-2 text-left text-[11px] font-normal leading-snug text-[#D9E4F8] shadow-[0_16px_40px_rgba(0,0,0,0.55)] backdrop-blur-md"
       >
         {text}
       </span>
-    </span>
+    ) : null;
+
+  return (
+    <>
+      <span
+        ref={wrapRef}
+        className={`inline-flex shrink-0 ${className}`}
+        onPointerEnter={show}
+        onPointerLeave={scheduleHide}
+        onFocusCapture={show}
+        onBlurCapture={handleBlur}
+      >
+        <button
+          type="button"
+          className="-m-0.5 rounded-lg p-0.5 text-[#718096] outline-none transition hover:text-[#a0aec0] focus-visible:ring-2 focus-visible:ring-[#4940c6]/55"
+          aria-label={label}
+          aria-describedby={open ? tipId : undefined}
+          aria-expanded={open}
+        >
+          <HiOutlineInformationCircle className="h-4 w-4" aria-hidden />
+        </button>
+      </span>
+      {mounted && tipNode ? createPortal(tipNode, document.body) : null}
+    </>
   );
 }
 
