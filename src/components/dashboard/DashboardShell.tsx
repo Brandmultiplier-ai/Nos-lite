@@ -7,6 +7,11 @@ import { ContentSection } from "@/components/sections/ContentSection";
 import { EmailOutreachSection } from "@/components/sections/EmailOutreachSection";
 import { LinkedInSection } from "@/components/sections/LinkedInSection";
 import { OverviewSection } from "@/components/sections/OverviewSection";
+import { BrandIntelligenceSection } from "@/components/sections/BrandIntelligenceSection";
+import { CompetitivePositioningSection } from "@/components/sections/CompetitivePositioningSection";
+import { MeasurementFrameworkSection } from "@/components/sections/MeasurementFrameworkSection";
+import { NarrativeIntelligenceSection } from "@/components/sections/NarrativeIntelligenceSection";
+import { SearchIntelligenceSection } from "@/components/sections/SearchIntelligenceSection";
 import { SettingsSection } from "@/components/sections/SettingsSection";
 import { WebsiteSignalsSection } from "@/components/sections/WebsiteSignalsSection";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
@@ -19,6 +24,16 @@ function SectionContent() {
   switch (section) {
     case "overview":
       return <OverviewSection key={contentKey} />;
+    case "search-intelligence":
+      return <SearchIntelligenceSection key={contentKey} />;
+    case "brand-intelligence":
+      return <BrandIntelligenceSection key={contentKey} />;
+    case "measurement-framework":
+      return <MeasurementFrameworkSection key={contentKey} />;
+    case "competitive-positioning":
+      return <CompetitivePositioningSection key={contentKey} />;
+    case "narrative-intelligence":
+      return <NarrativeIntelligenceSection key={contentKey} />;
     case "website-signals":
       return <WebsiteSignalsSection key={contentKey} />;
     case "linkedin":

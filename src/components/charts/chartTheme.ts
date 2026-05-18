@@ -2,12 +2,22 @@
 
 export const axisStyle = { fill: "#A0AEC0", fontSize: 11 };
 
+export const chartColors = {
+  primary: "#5b4ed4",
+  primaryDark: "#4940c6",
+  accent: "#f36901",
+  accentBright: "#ff7a1a",
+  teal: "#00D4FF",
+  green: "#01B574",
+  red: "#EE5D50",
+};
+
 export const tooltipContentStyle = {
-  background: "rgba(17, 28, 68, 0.94)",
-  border: "1px solid rgba(255,255,255,0.1)",
+  background: "rgba(12, 10, 28, 0.96)",
+  border: "1px solid rgba(91, 78, 212, 0.35)",
   borderRadius: 14,
   color: "#fff",
-  boxShadow: "0 16px 32px rgba(0,0,0,0.35)",
+  boxShadow: "0 16px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(243, 105, 1, 0.08)",
 };
 
 export const chartGridStroke = "rgba(255,255,255,0.045)";

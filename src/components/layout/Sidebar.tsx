@@ -12,17 +12,27 @@ import {
   HiOutlineCog,
   HiOutlineDocumentText,
   HiOutlineGlobeAlt,
+  HiOutlineLightningBolt,
   HiOutlineLogout,
   HiOutlineMail,
+  HiOutlineSearch,
   HiOutlineShieldCheck,
+  HiOutlineSparkles,
+  HiOutlineTrendingUp,
   HiOutlineUser,
   HiOutlineUserGroup,
+  HiOutlineViewGrid,
 } from "react-icons/hi";
 import type { IconType } from "react-icons";
 import { NarrativeOsLogo } from "@/components/branding/NarrativeOsLogo";
 
 const sectionIcons: Record<SectionId, IconType> = {
   overview: HiOutlineChartPie,
+  "search-intelligence": HiOutlineSearch,
+  "brand-intelligence": HiOutlineLightningBolt,
+  "measurement-framework": HiOutlineTrendingUp,
+  "competitive-positioning": HiOutlineViewGrid,
+  "narrative-intelligence": HiOutlineSparkles,
   "website-signals": HiOutlineGlobeAlt,
   linkedin: HiOutlineUserGroup,
   "email-outreach": HiOutlineMail,

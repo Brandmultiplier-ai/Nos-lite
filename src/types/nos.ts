@@ -4,11 +4,201 @@ export type AnalyticsPeriodId = "7d" | "30d" | "3m" | "month";
 
 export type SectionId =
   | "overview"
+  | "search-intelligence"
+  | "brand-intelligence"
+  | "measurement-framework"
+  | "competitive-positioning"
+  | "narrative-intelligence"
   | "website-signals"
   | "linkedin"
   | "email-outreach"
   | "content"
   | "settings";
+
+/** v1.1 — shared insight action block */
+export interface IntelligenceAction {
+  title: string;
+  body: string;
+  priority: "high" | "medium" | "low";
+  confidence: number;
+}
+
+export interface IntelligenceKpi {
+  label: string;
+  value: string;
+  change: number;
+  context: string;
+}
+
+/** SEO / GEO / AEO */
+export interface SearchQueryCluster {
+  cluster: string;
+  volume: number;
+  shareOfVoice: number;
+  trendPct: number;
+  aeoCoverage: number;
+  intent: "informational" | "commercial" | "navigational";
+}
+
+export interface SearchSovPoint {
+  period: string;
+  owned: number;
+  categoryAvg: number;
+}
+
+export interface AeoEngineCoverage {
+  engine: string;
+  answerShare: number;
+  citationGap: number;
+}
+
+export interface SearchIntelligenceData {
+  kpis: IntelligenceKpi[];
+  queryClusters: SearchQueryCluster[];
+  sovTrend: SearchSovPoint[];
+  aeoCoverage: AeoEngineCoverage[];
+  geoRegions: { region: string; visibility: number; delta: number }[];
+  recommendations: IntelligenceAction[];
+  methodNote: string;
+}
+
+/** Brand intelligence */
+export interface BrandSentimentPoint {
+  period: string;
+  positive: number;
+  neutral: number;
+  negative: number;
+}
+
+export interface CompetitorMentionRow {
+  brand: string;
+  shareOfMention: number;
+  deltaPct: number;
+  sentimentScore: number;
+  isSelf?: boolean;
+}
+
+export interface BrandThemeRow {
+  theme: string;
+  volume: number;
+  sentiment: number;
+  momentum: number;
+}
+
+export interface BrandIntelligenceData {
+  kpis: IntelligenceKpi[];
+  sentimentTrend: BrandSentimentPoint[];
+  competitorMentions: CompetitorMentionRow[];
+  themes: BrandThemeRow[];
+  revenueProxy: { label: string; value: string; note: string }[];
+  recommendations: IntelligenceAction[];
+  methodNote: string;
+}
+
+/** Measurement framework (FURCR) */
+export type BrandAttributeId =
+  | "familiarity"
+  | "uniqueness"
+  | "consistency"
+  | "relevance"
+  | "reverence";
+
+export interface BrandAttributeScore {
+  id: BrandAttributeId;
+  label: string;
+  score: number;
+  benchmark: number;
+  trendPct: number;
+  methodNote: string;
+}
+
+export interface MeasurementTrendPoint {
+  month: string;
+  familiarity: number;
+  uniqueness: number;
+  consistency: number;
+  relevance: number;
+  reverence: number;
+}
+
+export interface MeasurementFrameworkData {
+  compositeIndex: number;
+  compositeTrendPct: number;
+  attributes: BrandAttributeScore[];
+  trendSeries: MeasurementTrendPoint[];
+  recommendations: IntelligenceAction[];
+  methodNote: string;
+}
+
+/** Competitive positioning */
+export interface CompetitorPosition {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  isSelf?: boolean;
+}
+
+export interface PositioningSnapshot {
+  period: string;
+  competitors: CompetitorPosition[];
+}
+
+export interface CompetitivePositioningData {
+  axisXLabel: string;
+  axisYLabel: string;
+  quadrantLabels: { q1: string; q2: string; q3: string; q4: string };
+  snapshots: PositioningSnapshot[];
+  rankHistory: { period: string; rank: number; total: number }[];
+  movementHighlights: { competitor: string; delta: string; direction: "up" | "down" | "flat" }[];
+  recommendations: IntelligenceAction[];
+  methodNote: string;
+}
+
+/** Narrative intelligence */
+export interface StorylineVariant {
+  id: string;
+  name: string;
+  summary: string;
+  channels: ("Website" | "LinkedIn" | "Email" | "Content")[];
+  deploymentPct: number;
+  cacDeltaPct: number;
+  velocityDeltaDays: number;
+  conversionLiftPct: number;
+}
+
+export interface NarrativeChannelDeployment {
+  channel: "Website" | "LinkedIn" | "Email" | "Content";
+  variantId: string;
+  variantName: string;
+  touchpoints: number;
+  pipelineShare: number;
+}
+
+export interface PipelineImpactRow {
+  metric: string;
+  baseline: string;
+  optimized: string;
+  liftPct: number;
+  attributionNote: string;
+}
+
+export interface NarrativeIntelligenceData {
+  coreStoryline: string;
+  variants: StorylineVariant[];
+  channelDeployments: NarrativeChannelDeployment[];
+  pipelineImpact: PipelineImpactRow[];
+  recommendations: IntelligenceAction[];
+  methodNote: string;
+}
+
+export interface WorkspaceIntelligence {
+  search: SearchIntelligenceData;
+  brand: BrandIntelligenceData;
+  measurement: MeasurementFrameworkData;
+  competitive: CompetitivePositioningData;
+  narrative: NarrativeIntelligenceData;
+}
 
 export interface KpiStat {
   label: string;
@@ -273,6 +463,8 @@ export interface WorkspaceData {
     rows: ContentRow[];
   };
   integrations: WorkspaceIntegrations;
+  /** v1.1 intelligence layers — synthesized per workspace (set in demoWorkspace merge) */
+  intelligence?: WorkspaceIntelligence;
   /** Present when `nos_demo_data.json` is merged into this workspace */
   demoPeople?: NosDemoPerson[];
 }

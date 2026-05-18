@@ -1226,6 +1226,11 @@ export const workspaceList = Object.values(workspaces);
 
 export const navItems = [
   { id: "overview" as const, label: "Overview" },
+  { id: "search-intelligence" as const, label: "Search Intel" },
+  { id: "brand-intelligence" as const, label: "Brand Intel" },
+  { id: "measurement-framework" as const, label: "Measurement" },
+  { id: "competitive-positioning" as const, label: "Positioning" },
+  { id: "narrative-intelligence" as const, label: "Narrative Intel" },
   { id: "website-signals" as const, label: "Website Signals" },
   { id: "linkedin" as const, label: "LinkedIn" },
   { id: "email-outreach" as const, label: "Email Outreach" },
@@ -1235,6 +1240,11 @@ export const navItems = [
 
 export const sectionTitles: Record<string, string> = {
   overview: "Overview",
+  "search-intelligence": "Search / GEO / AEO Intelligence",
+  "brand-intelligence": "Brand Intelligence",
+  "measurement-framework": "Brand Measurement Framework",
+  "competitive-positioning": "Competitive Positioning",
+  "narrative-intelligence": "Narrative Intelligence",
   "website-signals": "Website Signals",
   linkedin: "LinkedIn",
   "email-outreach": "Email Outreach",

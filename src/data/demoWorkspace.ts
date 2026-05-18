@@ -4,6 +4,7 @@ import {
   buildAllLinkedInPeriods,
   toSignalFeedFromPeople,
 } from "@/data/analyticsBuilders";
+import { buildWorkspaceIntelligence } from "@/data/v11IntelligenceBuilders";
 import type {
   NosDemoDatabase,
   NosDemoPerson,
@@ -122,6 +123,7 @@ export function getWorkspaceDataWithDemo(workspaceId: WorkspaceId): WorkspaceDat
 
     return {
       ...base,
+      intelligence: buildWorkspaceIntelligence(workspaceId, []),
       overview: {
         ...base.overview,
         narrativeInsights: intel.narrativeInsights,
@@ -174,6 +176,7 @@ export function getWorkspaceDataWithDemo(workspaceId: WorkspaceId): WorkspaceDat
 
   return {
     ...base,
+    intelligence: buildWorkspaceIntelligence(workspaceId, people),
     overview,
     website: {
       stats: websiteStats,
