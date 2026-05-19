@@ -46,7 +46,7 @@ export function CompetitivePositioningSection() {
 
   return (
     <div className="space-y-6">
-      <GlassCard className="border border-[#4940c6]/20 bg-gradient-to-br from-[#4940c6]/10 to-[#f36901]/8 p-6">
+      <GlassCard className="p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#4940c6]">Competitive positioning</p>
         <h2 className="mt-1 font-display text-2xl font-bold text-white">Quadrant dynamics over time</h2>
         <p className="mt-2 max-w-3xl text-sm text-[#A0AEC0]">
@@ -69,7 +69,7 @@ export function CompetitivePositioningSection() {
                 <XAxis dataKey="period" tick={axisStyle} />
                 <YAxis reversed domain={[1, 5]} tick={axisStyle} allowDecimals={false} />
                 <Tooltip contentStyle={tooltipContentStyle} />
-                <Line type="monotone" dataKey="rank" stroke="#f36901" strokeWidth={2} dot={{ r: 4 }} />
+                <Line type="monotone" dataKey="rank" stroke="#4940c6" strokeWidth={2} dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>

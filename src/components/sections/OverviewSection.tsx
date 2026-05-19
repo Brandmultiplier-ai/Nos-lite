@@ -95,7 +95,7 @@ export function OverviewSection() {
 
   return (
     <div className="space-y-6">
-      <GlassCard className="border border-white/[0.07] bg-gradient-to-br from-[#12183a]/80 via-transparent to-transparent p-7">
+      <GlassCard className="p-7">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-3xl space-y-2">
             <p className="text-xs uppercase tracking-[0.18em] text-[#74B7FF]/90">Acquisition intelligence</p>
@@ -138,7 +138,7 @@ export function OverviewSection() {
               ))}
             </div>
           </div>
-          <div className="md:col-span-7 min-h-[220px] min-w-0 rounded-2xl border border-white/[0.06] bg-black/20 p-3 sm:p-5">
+          <div className="md:col-span-7 min-h-[220px] min-w-0 rounded-2xl border border-[#4940c6]/15 bg-[#121832] p-3 sm:p-5">
             <div className="min-h-[200px] w-full min-w-0">
               <ResponsiveContainer width="100%" height={230}>
                 <BarChart data={volumeSparkSeries} margin={{ left: 4, right: 14, top: 8, bottom: 4 }}>

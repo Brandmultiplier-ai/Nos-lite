@@ -39,7 +39,7 @@ export function NarrativeIntelligenceSection() {
 
   return (
     <div className="space-y-6">
-      <GlassCard className="border border-[#f36901]/20 bg-gradient-to-br from-[#f36901]/10 via-[#4940c6]/8 to-transparent p-6">
+      <GlassCard className="p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#f36901]">Narrative intelligence</p>
         <h2 className="mt-1 font-display text-2xl font-bold text-white">Storyline → channel → pipeline</h2>
         <p className="mt-3 rounded-xl border border-white/[0.08] bg-black/30 p-4 text-sm leading-relaxed text-[#D9E4F8]">

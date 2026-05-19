@@ -26,7 +26,7 @@ export function SearchIntelligenceSection() {
 
   return (
     <div className="space-y-6">
-      <GlassCard className="border border-[#4940c6]/20 bg-gradient-to-br from-[#4940c6]/10 via-transparent to-[#f36901]/5 p-6">
+      <GlassCard className="p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#f36901]">Search intelligence</p>
         <h2 className="mt-1 font-display text-2xl font-bold text-white">SEO · GEO · AEO</h2>
         <p className="mt-2 max-w-3xl text-sm text-[#A0AEC0]">

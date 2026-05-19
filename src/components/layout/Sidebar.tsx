@@ -140,23 +140,16 @@ export function Sidebar() {
             <button
               key={item.id}
               type="button"
+              data-active={active || undefined}
               onClick={() => setSection(item.id)}
-              className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
-                active
-                  ? "bg-white/[0.06] text-white shadow-[0_0_0_1px_rgba(73,64,198,0.35)]"
-                  : "text-[#A0AEC0] hover:bg-white/[0.04] hover:text-white"
+              className={`nos-sidebar-nav-item relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium ${
+                active ? "nos-sidebar-nav-item-active" : ""
               }`}
             >
               {active && (
-                <span className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full bg-[#4940c6]" />
+                <span className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full bg-[#f36901]" />
               )}
-              <span
-                className={`flex h-8 w-8 items-center justify-center rounded-lg ${
-                  active
-                    ? "bg-gradient-to-br from-[#3a32a0] to-[#4940c6] text-white"
-                    : "bg-[#1B254B] text-[#4940c6] group-hover:bg-[#1f2a56]"
-                }`}
-              >
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#ff9233] via-[#f36901] to-[#e06408] text-white shadow-[0_4px_12px_rgba(243,105,1,0.25)]">
                 <Icon className="h-4 w-4" />
               </span>
               {item.label}

@@ -275,7 +275,6 @@ export function WebsiteSignalsSection() {
             label={stat.label}
             value={stat.value}
             info={METRIC_DESCRIPTIONS[stat.label]}
-            className="border-white/[0.08] bg-gradient-to-br from-[#1A1734]/78 via-[#11172f]/82 to-[#090c16]/90 backdrop-blur-md"
           />
         ))}
       </div>

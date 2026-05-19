@@ -108,7 +108,12 @@ export function ContentSection() {
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {content.stats.map((stat) => (
-          <SimpleStatCard key={stat.label} label={stat.label} value={stat.value} info={METRIC_DESCRIPTIONS[stat.label]} />
+          <SimpleStatCard
+            key={stat.label}
+            label={stat.label}
+            value={stat.value}
+            info={METRIC_DESCRIPTIONS[stat.label]}
+          />
         ))}
       </div>
 
