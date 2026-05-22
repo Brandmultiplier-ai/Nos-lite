@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { HiOutlineInformationCircle } from "react-icons/hi";
+import { usesDesignTokens } from "@/theme/themeClasses";
+import { useTheme } from "@/theme/ThemeProvider";
 
 interface CardInfoTipProps {
   text: string;
@@ -29,6 +31,23 @@ function collectScrollTargets(start: HTMLElement | null): Set<EventTarget> {
 }
 
 export function CardInfoTip({ text, subject = "Metric", className = "" }: CardInfoTipProps) {
+  const { version } = useTheme();
+  const focusRingClass = usesDesignTokens(version)
+    ? "focus-visible:ring-2 focus-visible:ring-[var(--theme-primary)]"
+    : "focus-visible:ring-2 focus-visible:ring-[#4940c6]/55";
+  const iconClass = usesDesignTokens(version)
+    ? "text-[var(--theme-mute)] hover:text-[var(--theme-ink-secondary)]"
+    : "text-[#718096] hover:text-[#a0aec0]";
+  const tipClass =
+    version === "v5"
+      ? "w-56 max-w-[min(14rem,calc(100vw-3rem))] rounded-xl border border-[var(--theme-hairline)] bg-[#FFFFFF] px-3 py-2 text-left text-[11px] font-normal leading-snug text-[var(--theme-ink-secondary)] shadow-[var(--theme-elevated-shadow)]"
+      : version === "v4"
+      ? "w-56 max-w-[min(14rem,calc(100vw-3rem))] rounded-[16px] border border-white/20 bg-[#111111] px-3 py-2 text-left text-[11px] font-normal leading-snug text-[#d1d5db] shadow-[0_12px_32px_rgba(0,0,0,0.65)]"
+      : version === "v3"
+      ? "w-56 max-w-[min(14rem,calc(100vw-3rem))] rounded-[12px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-raised)] px-3 py-2 text-left text-[11px] font-normal leading-snug text-[var(--theme-ink-secondary)] shadow-[var(--theme-elevated-shadow)]"
+      : usesDesignTokens(version)
+        ? "w-56 max-w-[min(14rem,calc(100vw-3rem))] rounded-[24px] border border-[var(--theme-hairline)] bg-[#FFFFFF] px-3 py-2 text-left text-[11px] font-normal leading-snug text-[var(--theme-ink-secondary)] shadow-[var(--theme-elevated-shadow)]"
+        : "w-56 max-w-[min(14rem,calc(100vw-3rem))] rounded-lg border border-white/[0.12] bg-[#0c101c]/96 px-3 py-2 text-left text-[11px] font-normal leading-snug text-[#D9E4F8] shadow-[0_16px_40px_rgba(0,0,0,0.55)] backdrop-blur-md";
   const wrapRef = useRef<HTMLSpanElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -184,7 +203,7 @@ export function CardInfoTip({ text, subject = "Metric", className = "" }: CardIn
           zIndex: TIP_Z,
           visibility: coords ? "visible" : "hidden",
         }}
-        className="w-56 max-w-[min(14rem,calc(100vw-3rem))] rounded-lg border border-white/[0.12] bg-[#0c101c]/96 px-3 py-2 text-left text-[11px] font-normal leading-snug text-[#D9E4F8] shadow-[0_16px_40px_rgba(0,0,0,0.55)] backdrop-blur-md"
+        className={tipClass}
       >
         {text}
       </span>
@@ -202,7 +221,7 @@ export function CardInfoTip({ text, subject = "Metric", className = "" }: CardIn
       >
         <button
           type="button"
-          className="-m-0.5 rounded-lg p-0.5 text-[#718096] outline-none transition hover:text-[#a0aec0] focus-visible:ring-2 focus-visible:ring-[#4940c6]/55"
+          className={`-m-0.5 rounded-lg p-0.5 outline-none transition ${iconClass} ${focusRingClass}`}
           aria-label={label}
           aria-describedby={open ? tipId : undefined}
           aria-expanded={open}

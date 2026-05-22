@@ -10,52 +10,61 @@ import {
   YAxis,
 } from "recharts";
 import type { ChartPoint } from "@/types/nos";
-import { axisStyle, chartColors, chartGridStroke, tooltipContentStyle } from "@/components/charts/chartTheme";
+import { useChartTheme } from "@/components/charts/chartTheme";
 
 interface SignalAreaChartProps {
   data: ChartPoint[];
 }
 
 export function SignalAreaChart({ data }: SignalAreaChartProps) {
+  const { chartColors, chartGridStroke, tooltipContentStyle, axisStyle, isNeonCharts, isMboardCharts } =
+    useChartTheme();
+
+  const primaryStroke = isNeonCharts ? chartColors.primary : chartColors.primaryDark;
+  const secondaryStroke = isNeonCharts ? chartColors.teal : chartColors.accent;
+
   return (
     <ResponsiveContainer width="100%" height={280}>
       <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
         <defs>
           <linearGradient id="signalAccentGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={chartColors.accent} stopOpacity={0.4} />
-            <stop offset="100%" stopColor={chartColors.accent} stopOpacity={0} />
+            <stop
+              offset="0%"
+              stopColor={secondaryStroke}
+              stopOpacity={isNeonCharts ? 0.12 : isMboardCharts ? 0.15 : 0.4}
+            />
+            <stop offset="100%" stopColor={secondaryStroke} stopOpacity={0} />
           </linearGradient>
-          <linearGradient id="signalPurpleGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#4940c6" stopOpacity={0.4} />
-            <stop offset="100%" stopColor="#4940c6" stopOpacity={0} />
+          <linearGradient id="signalPrimaryGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop
+              offset="0%"
+              stopColor={primaryStroke}
+              stopOpacity={isNeonCharts ? 0.18 : isMboardCharts ? 0.12 : 0.4}
+            />
+            <stop offset="100%" stopColor={primaryStroke} stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} />
-        <XAxis
-          dataKey="month"
-          tick={axisStyle}
-          axisLine={false}
-          tickLine={false}
+        <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} vertical={false} />
+        <XAxis dataKey="month" tick={axisStyle} axisLine={false} tickLine={false} />
+        <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
+        <Tooltip
+          contentStyle={tooltipContentStyle}
+          cursor={{ stroke: primaryStroke, strokeOpacity: 0.22 }}
         />
-        <YAxis
-          tick={axisStyle}
-          axisLine={false}
-          tickLine={false}
-        />
-        <Tooltip contentStyle={tooltipContentStyle} cursor={{ stroke: "#4940c6", strokeOpacity: 0.22 }} />
         <Area
           type="monotone"
           dataKey="signals"
-          stroke={chartColors.accent}
+          stroke={secondaryStroke}
           fill="url(#signalAccentGrad)"
-          strokeWidth={2}
+          strokeWidth={isMboardCharts ? 2.5 : 2}
+          strokeDasharray={isNeonCharts ? "6 5" : undefined}
         />
         <Area
           type="monotone"
           dataKey="leads"
-          stroke="#4940c6"
-          fill="url(#signalPurpleGrad)"
-          strokeWidth={2}
+          stroke={primaryStroke}
+          fill="url(#signalPrimaryGrad)"
+          strokeWidth={isMboardCharts ? 2.5 : isNeonCharts ? 2.5 : 2}
         />
       </AreaChart>
     </ResponsiveContainer>

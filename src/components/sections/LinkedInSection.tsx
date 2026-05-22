@@ -9,15 +9,18 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { axisStyle, chartGridStroke, tooltipContentStyle } from "@/components/charts/chartTheme";
-import { CardInfoTip, MetricHeadingWithInfo } from "@/components/ui/CardInfoTip";
+import { useChartTheme } from "@/components/charts/chartTheme";
+import { CardInfoTip } from "@/components/ui/CardInfoTip";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { IntegrationStrip } from "@/components/ui/IntegrationStrip";
+import { SimpleStatCard } from "@/components/ui/SimpleStatCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useDashboard } from "@/context/DashboardContext";
 import { HiOutlineChevronRight, HiOutlineX } from "react-icons/hi";
 import { useEffect, useMemo, useState } from "react";
 import { CHART_CARD_DESCRIPTIONS, METRIC_DESCRIPTIONS } from "@/data/metricDescriptions";
+import { IntelligencePanelHeader, MboardChartFrame } from "@/components/intelligence/mboardUi";
+import { useSectionThemeCopy } from "@/theme/sectionThemeCopy";
 
 type LinkedInView = "overview" | "contacts" | "campaigns";
 type TimeWindow = "7d" | "30d" | "3m" | "month";
@@ -53,6 +56,9 @@ interface CampaignItem {
 }
 
 export function LinkedInSection() {
+  const { chartGridStroke, tooltipContentStyle, chartColors, axisStyle } = useChartTheme();
+  const copy = useSectionThemeCopy();
+  const { tc, isV5, darkGradientGlass } = copy;
   const { data, workspaceId } = useDashboard();
   const { linkedin } = data;
 
@@ -265,10 +271,15 @@ export function LinkedInSection() {
     [scale, timeMetrics.insightsLen, timeMetrics.kpiMult],
   );
 
+  const activityLeadColor = isV5 ? chartColors.teal : "#01B574";
+  const activityMsgColor = isV5 ? chartColors.accent : "#f36901";
+  const engagementColor = isV5 ? chartColors.teal : "#00D4FF";
+  const campaignMsgColor = isV5 ? chartColors.accent : "#EE8A50";
+
   return (
     <div className="space-y-6 pb-2">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="inline-flex rounded-xl border border-white/[0.08] bg-[#111C44]/70 p-1">
+        <div className={copy.tabShell}>
           {[
             { id: "overview" as const, label: "Overview" },
             { id: "contacts" as const, label: "Contacts" },
@@ -278,18 +289,14 @@ export function LinkedInSection() {
               key={tab.id}
               type="button"
               onClick={() => setActiveView(tab.id)}
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-                activeView === tab.id
-                  ? "bg-white/[0.08] text-white shadow-[0_0_0_1px_rgba(73,64,198,0.35)]"
-                  : "text-[#A0AEC0] hover:text-white"
-              }`}
+              className={copy.tabClass(activeView === tab.id)}
             >
               {tab.label}
             </button>
           ))}
         </div>
 
-        <div className="inline-flex rounded-xl border border-white/[0.08] bg-[#111C44]/70 p-1">
+        <div className={copy.tabShell}>
           {[
             { id: "7d" as const, label: "7 days" },
             { id: "30d" as const, label: "30 days" },
@@ -300,9 +307,7 @@ export function LinkedInSection() {
               key={range.id}
               type="button"
               onClick={() => setTimeWindow(range.id)}
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-                timeWindow === range.id ? "bg-[#4940c6] text-white" : "text-[#A0AEC0] hover:text-white"
-              }`}
+              className={copy.tabClass(timeWindow === range.id)}
             >
               {range.label}
             </button>
@@ -318,143 +323,198 @@ export function LinkedInSection() {
         items={data.integrations.linkedin}
       />
 
-          <GlassCard className="p-0">
-            <div className="divide-y divide-white/[0.06]">
-              <div className="grid grid-cols-1 lg:grid-cols-12">
-                <div className="p-6 lg:col-span-3 lg:border-e lg:border-white/[0.06]">
-                  <MetricHeadingWithInfo
-                    title="Next actions"
-                    hint={METRIC_DESCRIPTIONS["Next actions"] ?? ""}
-                    titleClassName="text-xs font-semibold uppercase tracking-[0.1em] text-[#A0AEC0]"
-                  />
-                  <p className="mt-2 text-3xl font-bold text-white">
-                    {Math.max(2, Math.round(12 * timeMetrics.kpiMult))}
-                  </p>
-                  <p className="mt-1 text-sm text-[#A0AEC0]">Pending tasks · {timeMetrics.periodLabel}</p>
-                </div>
-                {[
-                  {
-                    label: "Hot Opportunities",
-                    value: Math.round(2190 * scale * timeMetrics.kpiMult),
-                    sub: timeMetrics.periodLabel,
-                  },
-                  {
-                    label: "Leads Engaged",
-                    value: Math.round(398 * scale * timeMetrics.kpiMult),
-                    sub: "Invitations sent",
-                  },
-                  {
-                    label: "Conversations",
-                    value: Math.round(418 * scale * timeMetrics.kpiMult),
-                    sub: "Messages sent",
-                  },
-                ].map((m) => (
-                  <div
-                    key={m.label}
-                    className="border-b border-white/[0.06] p-6 last:border-b-0 sm:border-e sm:last:border-e-0 lg:col-span-3 lg:border-e lg:border-white/[0.06] lg:last:border-e-0 lg:last:border-b-0"
-                  >
-                    <MetricHeadingWithInfo
-                      title={m.label}
-                      hint={METRIC_DESCRIPTIONS[m.label] ?? ""}
-                      titleClassName="text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]"
-                    />
-                    <p className="mt-2 text-4xl font-bold leading-none text-white">{m.value}</p>
-                    <p className="mt-1 text-sm text-[#A0AEC0]">{m.sub}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                {effectiveStats.map((s) => (
-                  <div
-                    key={s.label}
-                    className="border-b border-white/[0.06] p-6 last:border-b-0 sm:border-e sm:last:border-e-0 lg:border-e lg:border-white/[0.06] lg:last:border-e-0 [&:nth-child(4)]:lg:border-e-0"
-                  >
-                    <MetricHeadingWithInfo
-                      title={s.label}
-                      hint={METRIC_DESCRIPTIONS[s.label] ?? ""}
-                      titleClassName="text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]"
-                    />
-                    <p className="mt-2 text-3xl font-bold leading-none text-white">{s.value}</p>
-                    <p className="mt-1 text-sm text-[#A0AEC0]">Telemetry · {timeMetrics.periodLabel}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </GlassCard>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            <SimpleStatCard
+              label="Next actions"
+              value={String(Math.max(2, Math.round(12 * timeMetrics.kpiMult)))}
+              info={METRIC_DESCRIPTIONS["Next actions"]}
+              context={`Pending tasks · ${timeMetrics.periodLabel}`}
+            />
+            <SimpleStatCard
+              label="Hot Opportunities"
+              value={String(Math.round(2190 * scale * timeMetrics.kpiMult))}
+              info={METRIC_DESCRIPTIONS["Hot Opportunities"]}
+              context={timeMetrics.periodLabel}
+            />
+            <SimpleStatCard
+              label="Leads Engaged"
+              value={String(Math.round(398 * scale * timeMetrics.kpiMult))}
+              info={METRIC_DESCRIPTIONS["Leads Engaged"]}
+              context="Invitations sent"
+            />
+            <SimpleStatCard
+              label="Conversations"
+              value={String(Math.round(418 * scale * timeMetrics.kpiMult))}
+              info={METRIC_DESCRIPTIONS["Conversations"]}
+              context="Messages sent"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {effectiveStats.map((s) => (
+              <SimpleStatCard
+                key={s.label}
+                label={s.label}
+                value={s.value}
+                info={METRIC_DESCRIPTIONS[s.label]}
+                context={`Telemetry · ${timeMetrics.periodLabel}`}
+              />
+            ))}
+          </div>
 
           <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-            <GlassCard>
-              <div className="mb-1 flex flex-wrap items-start justify-between gap-2">
-                <h2 className="font-display text-xl font-bold text-white">Activity Overview</h2>
-                <CardInfoTip subject="Activity Overview" text={CHART_CARD_DESCRIPTIONS["Activity Overview"]} />
-              </div>
-              <p className="mb-4 mt-1 text-sm text-[#A0AEC0]">
-                Lead generation and outbound volume · {timeMetrics.periodLabel.toLowerCase()}
-              </p>
-              <ResponsiveContainer width="100%" height={250}>
-                <AreaChart data={activitySeries} margin={{ left: -8, right: 8, top: 6, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="overviewLeadGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#01B574" stopOpacity={0.38} />
-                      <stop offset="100%" stopColor="#01B574" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="overviewInviteGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#4940c6" stopOpacity={0.35} />
-                      <stop offset="100%" stopColor="#4940c6" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="overviewMsgGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#f36901" stopOpacity={0.34} />
-                      <stop offset="100%" stopColor="#f36901" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} />
-                  <XAxis dataKey="day" tick={axisStyle} axisLine={false} tickLine={false} />
-                  <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={tooltipContentStyle} />
-                  <Area type="monotone" dataKey="leads" stroke="#01B574" fill="url(#overviewLeadGrad)" strokeWidth={2} />
-                  <Area type="monotone" dataKey="invites" stroke="#4940c6" fill="url(#overviewInviteGrad)" strokeWidth={2} />
-                  <Area type="monotone" dataKey="messages" stroke="#f36901" fill="url(#overviewMsgGrad)" strokeWidth={2} />
-                </AreaChart>
-              </ResponsiveContainer>
+            <GlassCard className={darkGradientGlass}>
+              {isV5 ? (
+                <>
+                  <IntelligencePanelHeader
+                    eyebrow="Outbound volume"
+                    title="Activity Overview"
+                    hint={CHART_CARD_DESCRIPTIONS["Activity Overview"]}
+                  />
+                  <p className={`mb-4 mt-1 text-sm ${copy.muted}`}>
+                    Lead generation and outbound volume · {timeMetrics.periodLabel.toLowerCase()}
+                  </p>
+                  <MboardChartFrame>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <AreaChart data={activitySeries} margin={{ left: -8, right: 8, top: 6, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="overviewLeadGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={activityLeadColor} stopOpacity={0.38} />
+                            <stop offset="100%" stopColor={activityLeadColor} stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="overviewInviteGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={chartColors.primaryDark} stopOpacity={0.35} />
+                            <stop offset="100%" stopColor={chartColors.primaryDark} stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="overviewMsgGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={activityMsgColor} stopOpacity={0.34} />
+                            <stop offset="100%" stopColor={activityMsgColor} stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} />
+                        <XAxis dataKey="day" tick={axisStyle} axisLine={false} tickLine={false} />
+                        <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
+                        <Tooltip contentStyle={tooltipContentStyle} />
+                        <Area type="monotone" dataKey="leads" stroke={activityLeadColor} fill="url(#overviewLeadGrad)" strokeWidth={2.5} />
+                        <Area type="monotone" dataKey="invites" stroke={chartColors.primaryDark} fill="url(#overviewInviteGrad)" strokeWidth={2.5} />
+                        <Area type="monotone" dataKey="messages" stroke={activityMsgColor} fill="url(#overviewMsgGrad)" strokeWidth={2.5} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </MboardChartFrame>
+                </>
+              ) : (
+                <>
+                  <div className="mb-1 flex flex-wrap items-start justify-between gap-2">
+                    <h2 className={copy.h2}>Activity Overview</h2>
+                    <CardInfoTip subject="Activity Overview" text={CHART_CARD_DESCRIPTIONS["Activity Overview"]} />
+                  </div>
+                  <p className={`mb-4 mt-1 text-sm ${copy.muted}`}>
+                    Lead generation and outbound volume · {timeMetrics.periodLabel.toLowerCase()}
+                  </p>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <AreaChart data={activitySeries} margin={{ left: -8, right: 8, top: 6, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="overviewLeadGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#01B574" stopOpacity={0.38} />
+                          <stop offset="100%" stopColor="#01B574" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="overviewInviteGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={chartColors.primaryDark} stopOpacity={0.35} />
+                          <stop offset="100%" stopColor={chartColors.primaryDark} stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="overviewMsgGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#f36901" stopOpacity={0.34} />
+                          <stop offset="100%" stopColor="#f36901" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} />
+                      <XAxis dataKey="day" tick={axisStyle} axisLine={false} tickLine={false} />
+                      <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
+                      <Tooltip contentStyle={tooltipContentStyle} />
+                      <Area type="monotone" dataKey="leads" stroke="#01B574" fill="url(#overviewLeadGrad)" strokeWidth={2} />
+                      <Area type="monotone" dataKey="invites" stroke={chartColors.primaryDark} fill="url(#overviewInviteGrad)" strokeWidth={2} />
+                      <Area type="monotone" dataKey="messages" stroke="#f36901" fill="url(#overviewMsgGrad)" strokeWidth={2} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </>
+              )}
             </GlassCard>
 
-            <GlassCard>
-              <div className="mb-1 flex flex-wrap items-start justify-between gap-2">
-                <h2 className="font-display text-xl font-bold text-white">Engagement trend</h2>
-                <CardInfoTip subject="Engagement trend" text={CHART_CARD_DESCRIPTIONS["Engagement trend"]} />
-              </div>
-              <p className="mb-4 mt-1 text-sm text-[#A0AEC0]">
-                Native impressions + interactions by bucket · {timeMetrics.periodLabel.toLowerCase()}
-              </p>
-              <ResponsiveContainer width="100%" height={250}>
-                <AreaChart data={engagementTrendSeries} margin={{ left: -8, right: 8, top: 6, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id={`liEngTrendGrad-${workspaceId}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#00D4FF" stopOpacity={0.35} />
-                      <stop offset="100%" stopColor="#00D4FF" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} />
-                  <XAxis dataKey="period" tick={axisStyle} axisLine={false} tickLine={false} />
-                  <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={tooltipContentStyle} />
-                  <Area
-                    type="monotone"
-                    dataKey="engagements"
-                    stroke="#00D4FF"
-                    fill={`url(#liEngTrendGrad-${workspaceId})`}
-                    strokeWidth={2}
+            <GlassCard className={darkGradientGlass}>
+              {isV5 ? (
+                <>
+                  <IntelligencePanelHeader
+                    eyebrow="Engagement buckets"
+                    title="Engagement trend"
+                    hint={CHART_CARD_DESCRIPTIONS["Engagement trend"]}
                   />
-                </AreaChart>
-              </ResponsiveContainer>
+                  <p className={`mb-4 mt-1 text-sm ${copy.muted}`}>
+                    Native impressions + interactions by bucket · {timeMetrics.periodLabel.toLowerCase()}
+                  </p>
+                  <MboardChartFrame>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <AreaChart data={engagementTrendSeries} margin={{ left: -8, right: 8, top: 6, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id={`liEngTrendGrad-${workspaceId}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={engagementColor} stopOpacity={0.35} />
+                            <stop offset="100%" stopColor={engagementColor} stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} />
+                        <XAxis dataKey="period" tick={axisStyle} axisLine={false} tickLine={false} />
+                        <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
+                        <Tooltip contentStyle={tooltipContentStyle} />
+                        <Area
+                          type="monotone"
+                          dataKey="engagements"
+                          stroke={engagementColor}
+                          fill={`url(#liEngTrendGrad-${workspaceId})`}
+                          strokeWidth={2.5}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </MboardChartFrame>
+                </>
+              ) : (
+                <>
+                  <div className="mb-1 flex flex-wrap items-start justify-between gap-2">
+                    <h2 className={copy.h2}>Engagement trend</h2>
+                    <CardInfoTip subject="Engagement trend" text={CHART_CARD_DESCRIPTIONS["Engagement trend"]} />
+                  </div>
+                  <p className={`mb-4 mt-1 text-sm ${copy.muted}`}>
+                    Native impressions + interactions by bucket · {timeMetrics.periodLabel.toLowerCase()}
+                  </p>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <AreaChart data={engagementTrendSeries} margin={{ left: -8, right: 8, top: 6, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id={`liEngTrendGrad-${workspaceId}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#00D4FF" stopOpacity={0.35} />
+                          <stop offset="100%" stopColor="#00D4FF" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} />
+                      <XAxis dataKey="period" tick={axisStyle} axisLine={false} tickLine={false} />
+                      <YAxis tick={axisStyle} axisLine={false} tickLine={false} />
+                      <Tooltip contentStyle={tooltipContentStyle} />
+                      <Area
+                        type="monotone"
+                        dataKey="engagements"
+                        stroke="#00D4FF"
+                        fill={`url(#liEngTrendGrad-${workspaceId})`}
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </>
+              )}
             </GlassCard>
           </div>
 
           <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-            <GlassCard>
+            <GlassCard className={darkGradientGlass}>
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-display text-xl font-bold text-white">Latest Hot Leads</h2>
-                <button type="button" className="text-sm text-[#4940c6] hover:text-white">
+                <h2 className={copy.h2}>Latest Hot Leads</h2>
+                <button type="button" className={`text-sm ${tc.link}`}>
                   View More
                 </button>
               </div>
@@ -463,10 +523,10 @@ export function LinkedInSection() {
               ) : (
                 <div className="space-y-3">
                   {filteredFeed.slice(0, 5).map((row) => (
-                    <div key={`${row.name}-${row.time}`} className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+                    <div key={`${row.name}-${row.time}`} className={`flex items-center justify-between rounded-xl p-3 ${tc.rowInteractive}`}>
                       <div className="min-w-0">
-                        <p className="truncate font-medium text-white">{row.name}</p>
-                        <p className="truncate text-xs text-[#A0AEC0]">{row.title}</p>
+                        <p className={`truncate font-medium ${copy.ink}`}>{row.name}</p>
+                        <p className={`truncate text-xs ${copy.muted}`}>{row.title}</p>
                       </div>
                       <p className="ml-3 text-xs font-semibold text-[#EE5D50]">🔥🔥🔥</p>
                     </div>
@@ -475,10 +535,10 @@ export function LinkedInSection() {
               )}
             </GlassCard>
 
-            <GlassCard>
+            <GlassCard className={darkGradientGlass}>
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-display text-xl font-bold text-white">Latest Replies</h2>
-                <button type="button" className="text-sm text-[#4940c6] hover:text-white">
+                <h2 className={copy.h2}>Latest Replies</h2>
+                <button type="button" className={`text-sm ${tc.link}`}>
                   View More
                 </button>
               </div>
@@ -487,12 +547,12 @@ export function LinkedInSection() {
               ) : (
                 <div className="space-y-3">
                   {filteredFeed.slice(0, 5).map((row) => (
-                    <div key={`${row.name}-${row.time}-reply`} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
-                      <p className="text-sm font-semibold text-white">{row.name}</p>
-                      <p className="mt-1 text-xs text-[#A0AEC0]">
+                    <div key={`${row.name}-${row.time}-reply`} className={`rounded-xl p-3 ${tc.rowInteractive}`}>
+                      <p className={`text-sm font-semibold ${copy.ink}`}>{row.name}</p>
+                      <p className={`mt-1 text-xs ${copy.muted}`}>
                         {row.engagementType} · {row.time}
                       </p>
-                      <p className="mt-2 text-sm text-[#A0AEC0]">
+                      <p className={`mt-2 text-sm ${copy.muted}`}>
                         Interested in discussing next steps for collaboration and potential campaign fit.
                       </p>
                     </div>
@@ -505,9 +565,9 @@ export function LinkedInSection() {
       )}
 
       {activeView === "contacts" && (
-        <GlassCard>
+        <GlassCard className={darkGradientGlass}>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-xl font-bold text-white">Contacts</h2>
+            <h2 className={copy.h2}>Contacts</h2>
           </div>
           {filteredContacts.length === 0 ? (
             <EmptyState message="No contacts to show." />
@@ -529,26 +589,24 @@ export function LinkedInSection() {
                   {filteredContacts.map((contact) => (
                     <tr
                       key={contact.id}
-                      className={`cursor-pointer border-l-4 text-white transition ${
-                        selectedContactId === contact.id
-                          ? "border-l-[#4940c6] bg-white/[0.06]"
-                          : "border-l-transparent hover:bg-white/[0.035]"
+                      className={`${copy.tableRow} border-l-transparent ${copy.tableRowHover} ${
+                        selectedContactId === contact.id ? tc.rowSelected : ""
                       }`}
                       onClick={() => setSelectedContactId(contact.id)}
                     >
                       <td>
                         <p className="font-semibold">{contact.name}</p>
-                        <p className="text-xs text-[#A0AEC0]">
+                        <p className={`text-xs ${copy.muted}`}>
                           {contact.title} · {contact.company}
                         </p>
                       </td>
-                      <td className="text-[#A0AEC0]">{contact.signal}</td>
+                      <td className={copy.muted}>{contact.signal}</td>
                       <td className="text-[#EE5D50]">🔥🔥🔥</td>
-                      <td className="text-[#A0AEC0]">{contact.email}</td>
-                      <td className="text-[#A0AEC0]">{contact.impactDate}</td>
-                      <td className="text-[#A0AEC0]">{contact.list}</td>
+                      <td className={copy.muted}>{contact.email}</td>
+                      <td className={copy.muted}>{contact.impactDate}</td>
+                      <td className={copy.muted}>{contact.list}</td>
                       <td className="text-right">
-                        <HiOutlineChevronRight className="inline h-4 w-4 text-[#A0AEC0]" />
+                        <HiOutlineChevronRight className={`inline h-4 w-4 ${copy.muted}`} />
                       </td>
                     </tr>
                   ))}
@@ -561,14 +619,14 @@ export function LinkedInSection() {
 
       {activeView === "campaigns" && (
         <div className="space-y-5">
-          <GlassCard>
+          <GlassCard className={darkGradientGlass}>
             <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div>
-                <h2 className="font-display text-xl font-bold text-white">Outreach Campaigns</h2>
-                <p className="mt-1 text-sm text-[#A0AEC0]">Filter launchers · {timeMetrics.periodLabel}</p>
+                <h2 className={copy.h2}>Outreach Campaigns</h2>
+                <p className={`mt-1 text-sm ${copy.muted}`}>Filter launchers · {timeMetrics.periodLabel}</p>
               </div>
               <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
-                <div className="inline-flex flex-wrap gap-2 rounded-xl border border-white/[0.08] bg-black/25 p-1">
+                <div className={copy.tabShellTight}>
                   {(
                     [
                       ["all", "All"],
@@ -580,11 +638,7 @@ export function LinkedInSection() {
                       key={id}
                       type="button"
                       onClick={() => setCampaignStatusFilter(id)}
-                      className={`rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.06em] transition ${
-                        campaignStatusFilter === id
-                          ? "bg-[#4940c6]/80 text-white"
-                          : "text-[#A0AEC0] hover:text-white"
-                      }`}
+                      className={copy.filterClass(campaignStatusFilter === id)}
                     >
                       {label}
                     </button>
@@ -604,12 +658,12 @@ export function LinkedInSection() {
                     onClick={() => setSelectedCampaignId(campaign.id)}
                     className={`rounded-2xl border p-4 text-left transition ${
                       selectedCampaign?.id === campaign.id
-                        ? "border-[#4940c6]/60 bg-white/[0.05]"
+                        ? tc.rowSelectedBorder
                         : "border-white/[0.08] bg-white/[0.02] hover:border-white/[0.18]"
                     }`}
                   >
                     <div className="mb-3 flex items-center justify-between">
-                      <p className="font-medium text-white">{campaign.name}</p>
+                      <p className={`font-medium ${copy.ink}`}>{campaign.name}</p>
                       <span
                         className={`rounded-lg px-2 py-0.5 text-xs font-semibold ${
                           campaign.status === "Running"
@@ -621,10 +675,10 @@ export function LinkedInSection() {
                       </span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <p className="text-[#A0AEC0]">Connected: <span className="font-semibold text-white">{campaign.connected}</span></p>
-                      <p className="text-[#A0AEC0]">Invited: <span className="font-semibold text-white">{campaign.invited}</span></p>
-                      <p className="text-[#A0AEC0]">Accepted: <span className="font-semibold text-white">{campaign.acceptedRate}%</span></p>
-                      <p className="text-[#A0AEC0]">Replies: <span className="font-semibold text-white">{campaign.replies}</span></p>
+                      <p className={copy.muted}>Connected: <span className={`font-semibold ${copy.ink}`}>{campaign.connected}</span></p>
+                      <p className={copy.muted}>Invited: <span className={`font-semibold ${copy.ink}`}>{campaign.invited}</span></p>
+                      <p className={copy.muted}>Accepted: <span className={`font-semibold ${copy.ink}`}>{campaign.acceptedRate}%</span></p>
+                      <p className={copy.muted}>Replies: <span className={`font-semibold ${copy.ink}`}>{campaign.replies}</span></p>
                     </div>
                   </button>
                 ))}
@@ -633,16 +687,16 @@ export function LinkedInSection() {
           </GlassCard>
 
           {selectedCampaign && (
-            <GlassCard>
+            <GlassCard className={darkGradientGlass}>
               <div className="mb-3 flex items-center justify-between">
                 <div>
-                  <h3 className="font-display text-xl font-bold text-white">Campaign Insights</h3>
-                  <p className="text-sm text-[#A0AEC0]">{selectedCampaign.name}</p>
+                  <h3 className={copy.h3}>Campaign Insights</h3>
+                  <p className={`text-sm ${copy.muted}`}>{selectedCampaign.name}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelectedCampaignId(null)}
-                  className="text-[#A0AEC0] hover:text-white"
+                  className={copy.closeBtn}
                   aria-label="Close campaign insights"
                 >
                   <HiOutlineX className="h-5 w-5" />
@@ -650,23 +704,21 @@ export function LinkedInSection() {
               </div>
               <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
                 {[
-                  { label: "Invitations Sent", value: selectedCampaign.connected },
-                  { label: "Invitations Accepted", value: selectedCampaign.invited },
+                  { label: "Invitations Sent", value: String(selectedCampaign.connected) },
+                  { label: "Invitations Accepted", value: String(selectedCampaign.invited) },
                   { label: "Acceptance Rate", value: `${selectedCampaign.acceptedRate}%` },
                   { label: "Reply Rate", value: `${Math.max(5, Math.round((selectedCampaign.replies / Math.max(1, selectedCampaign.invited)) * 100))}%` },
                 ].map((k) => (
-                  <div key={k.label} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3">
-                    <MetricHeadingWithInfo
-                      title={k.label}
-                      hint={METRIC_DESCRIPTIONS[k.label] ?? ""}
-                      titleClassName="text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]"
-                    />
-                    <p className="mt-2 text-2xl font-bold text-white">{k.value}</p>
-                  </div>
+                  <SimpleStatCard
+                    key={k.label}
+                    label={k.label}
+                    value={k.value}
+                    info={METRIC_DESCRIPTIONS[k.label]}
+                  />
                 ))}
               </div>
-              <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-white/[0.08] bg-black/25 px-3 py-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#718096]">
+              <div className={`mb-4 flex flex-wrap items-center gap-2 ${copy.tabShellTight}`}>
+                <span className={`text-[11px] font-semibold uppercase tracking-[0.08em] ${copy.muteSm}`}>
                   Trend breakdown
                 </span>
                 {(
@@ -680,53 +732,107 @@ export function LinkedInSection() {
                     key={id}
                     type="button"
                     onClick={() => setLinkedinInsightTrendFilter(id)}
-                    className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                      linkedinInsightTrendFilter === id ? "bg-[#4940c6]/75 text-white" : "text-[#A0AEC0] hover:text-white"
-                    }`}
+                    className={copy.filterClass(linkedinInsightTrendFilter === id)}
                   >
                     {label}
                   </button>
                 ))}
               </div>
-              <ResponsiveContainer width="100%" height={240}>
-                <AreaChart
-                  data={campaignInsightsSeries}
-                  margin={{ left: 6, right: 10, top: 8, bottom: 4 }}
-                >
-                  <defs>
-                    <linearGradient id={`campaignInvitesGrad-${workspaceId}-${selectedCampaign.id}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#4940c6" stopOpacity={0.36} />
-                      <stop offset="100%" stopColor="#4940c6" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id={`campaignMessagesGrad-${workspaceId}-${selectedCampaign.id}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#EE8A50" stopOpacity={0.34} />
-                      <stop offset="100%" stopColor="#EE8A50" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} />
-                  <XAxis dataKey="day" tick={axisStyle} axisLine={false} tickLine={false} />
-                  <YAxis tick={axisStyle} axisLine={false} tickLine={false} width={36} />
-                  <Tooltip contentStyle={tooltipContentStyle} />
-                  {(linkedinInsightTrendFilter === "both" || linkedinInsightTrendFilter === "invitations") && (
-                    <Area
-                      type="monotone"
-                      dataKey="invitations"
-                      stroke="#4940c6"
-                      fill={`url(#campaignInvitesGrad-${workspaceId}-${selectedCampaign.id})`}
-                      strokeWidth={2}
-                    />
-                  )}
-                  {(linkedinInsightTrendFilter === "both" || linkedinInsightTrendFilter === "messages") && (
-                    <Area
-                      type="monotone"
-                      dataKey="messages"
-                      stroke="#EE8A50"
-                      fill={`url(#campaignMessagesGrad-${workspaceId}-${selectedCampaign.id})`}
-                      strokeWidth={2}
-                    />
-                  )}
-                </AreaChart>
-              </ResponsiveContainer>
+              {isV5 ? (
+                <>
+                  <IntelligencePanelHeader
+                    eyebrow="Campaign trajectory"
+                    title="Campaign insights trend"
+                    hint={`Invitation and message volume for ${selectedCampaign.name} (${timeMetrics.periodLabel.toLowerCase()})`}
+                  />
+                  <MboardChartFrame>
+                    <ResponsiveContainer width="100%" height={240}>
+                      <AreaChart
+                        data={campaignInsightsSeries}
+                        margin={{ left: 6, right: 10, top: 8, bottom: 4 }}
+                      >
+                        <defs>
+                          <linearGradient id={`campaignInvitesGrad-${workspaceId}-${selectedCampaign.id}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={chartColors.primaryDark} stopOpacity={0.36} />
+                            <stop offset="100%" stopColor={chartColors.primaryDark} stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id={`campaignMessagesGrad-${workspaceId}-${selectedCampaign.id}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={campaignMsgColor} stopOpacity={0.34} />
+                            <stop offset="100%" stopColor={campaignMsgColor} stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} />
+                        <XAxis dataKey="day" tick={axisStyle} axisLine={false} tickLine={false} />
+                        <YAxis tick={axisStyle} axisLine={false} tickLine={false} width={36} />
+                        <Tooltip contentStyle={tooltipContentStyle} />
+                        {(linkedinInsightTrendFilter === "both" || linkedinInsightTrendFilter === "invitations") && (
+                          <Area
+                            type="monotone"
+                            dataKey="invitations"
+                            stroke={chartColors.primaryDark}
+                            fill={`url(#campaignInvitesGrad-${workspaceId}-${selectedCampaign.id})`}
+                            strokeWidth={2.5}
+                          />
+                        )}
+                        {(linkedinInsightTrendFilter === "both" || linkedinInsightTrendFilter === "messages") && (
+                          <Area
+                            type="monotone"
+                            dataKey="messages"
+                            stroke={campaignMsgColor}
+                            fill={`url(#campaignMessagesGrad-${workspaceId}-${selectedCampaign.id})`}
+                            strokeWidth={2.5}
+                          />
+                        )}
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </MboardChartFrame>
+                </>
+              ) : (
+                <>
+                  <p className={`mb-4 text-sm ${copy.muted}`}>
+                    Invitation and message volume for {selectedCampaign.name} ({timeMetrics.periodLabel.toLowerCase()})
+                  </p>
+                  <ResponsiveContainer width="100%" height={240}>
+                    <AreaChart
+                      data={campaignInsightsSeries}
+                      margin={{ left: 6, right: 10, top: 8, bottom: 4 }}
+                    >
+                      <defs>
+                        <linearGradient id={`campaignInvitesGrad-${workspaceId}-${selectedCampaign.id}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={chartColors.primaryDark} stopOpacity={0.36} />
+                          <stop offset="100%" stopColor={chartColors.primaryDark} stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id={`campaignMessagesGrad-${workspaceId}-${selectedCampaign.id}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#EE8A50" stopOpacity={0.34} />
+                          <stop offset="100%" stopColor="#EE8A50" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke={chartGridStroke} />
+                      <XAxis dataKey="day" tick={axisStyle} axisLine={false} tickLine={false} />
+                      <YAxis tick={axisStyle} axisLine={false} tickLine={false} width={36} />
+                      <Tooltip contentStyle={tooltipContentStyle} />
+                      {(linkedinInsightTrendFilter === "both" || linkedinInsightTrendFilter === "invitations") && (
+                        <Area
+                          type="monotone"
+                          dataKey="invitations"
+                          stroke={chartColors.primaryDark}
+                          fill={`url(#campaignInvitesGrad-${workspaceId}-${selectedCampaign.id})`}
+                          strokeWidth={2}
+                        />
+                      )}
+                      {(linkedinInsightTrendFilter === "both" || linkedinInsightTrendFilter === "messages") && (
+                        <Area
+                          type="monotone"
+                          dataKey="messages"
+                          stroke="#EE8A50"
+                          fill={`url(#campaignMessagesGrad-${workspaceId}-${selectedCampaign.id})`}
+                          strokeWidth={2}
+                        />
+                      )}
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </>
+              )}
             </GlassCard>
           )}
         </div>
@@ -740,42 +846,42 @@ export function LinkedInSection() {
             aria-label="Close contact panel overlay"
             onClick={() => setSelectedContactId(null)}
           />
-          <aside className="absolute right-0 top-0 z-50 h-full w-full max-w-[420px] overflow-y-auto border-l border-white/[0.08] bg-gradient-to-b from-[#16132A]/96 via-[#0E1324]/96 to-[#070A12]/97 p-5 shadow-[-20px_0_42px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+          <aside className={copy.drawerAside}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-display text-xl font-bold text-white">{selectedContact.name}</h3>
+              <h3 className={copy.h2}>{selectedContact.name}</h3>
               <button
                 type="button"
                 onClick={() => setSelectedContactId(null)}
-                className="text-[#A0AEC0] hover:text-white"
+                className={copy.closeBtn}
                 aria-label="Close contact panel"
               >
                 <HiOutlineX className="h-5 w-5" />
               </button>
             </div>
-            <p className="text-sm text-[#A0AEC0]">
+            <p className={`text-sm ${copy.muted}`}>
               {selectedContact.title} · {selectedContact.company}
             </p>
-            <div className="mt-4 space-y-3 rounded-2xl border border-white/[0.08] bg-black/30 p-4">
-              <p className="text-sm font-semibold text-white">Signal</p>
-              <p className="text-sm text-[#A0AEC0]">{selectedContact.signal}</p>
+            <div className={`mt-4 space-y-3 ${copy.drawerPanel}`}>
+              <p className={`text-sm font-semibold ${copy.ink}`}>Signal</p>
+              <p className={`text-sm ${copy.muted}`}>{selectedContact.signal}</p>
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <p className="text-[#A0AEC0]">Status: <span className="font-semibold text-white">{selectedContact.status}</span></p>
-                <p className="text-[#A0AEC0]">Owner: <span className="font-semibold text-white">{selectedContact.owner}</span></p>
+                <p className={copy.muted}>Status: <span className={`font-semibold ${copy.ink}`}>{selectedContact.status}</span></p>
+                <p className={copy.muted}>Owner: <span className={`font-semibold ${copy.ink}`}>{selectedContact.owner}</span></p>
               </div>
             </div>
-            <div className="mt-4 space-y-3 rounded-2xl border border-white/[0.08] bg-black/30 p-4 text-sm">
-              <p className="font-semibold text-white">Company Information</p>
-              <p className="text-[#A0AEC0]">Industry: {selectedContact.industry}</p>
-              <p className="text-[#A0AEC0]">Company Size: {selectedContact.companySize}</p>
-              <p className="text-[#A0AEC0]">Location: {selectedContact.location}</p>
-              <a className="text-[#4940c6] hover:text-white" href={selectedContact.linkedinUrl} target="_blank" rel="noreferrer">
+            <div className={`mt-4 space-y-3 ${copy.drawerPanel}`}>
+              <p className={`font-semibold ${copy.ink}`}>Company Information</p>
+              <p className={copy.muted}>Industry: {selectedContact.industry}</p>
+              <p className={copy.muted}>Company Size: {selectedContact.companySize}</p>
+              <p className={copy.muted}>Location: {selectedContact.location}</p>
+              <a className={tc.link} href={selectedContact.linkedinUrl} target="_blank" rel="noreferrer">
                 View LinkedIn company
               </a>
             </div>
-            <div className="mt-4 space-y-2 rounded-2xl border border-white/[0.08] bg-black/30 p-4">
-              <p className="text-sm font-semibold text-white">Internal Notes</p>
+            <div className={`mt-4 space-y-2 ${copy.drawerPanel}`}>
+              <p className={`text-sm font-semibold ${copy.ink}`}>Internal Notes</p>
               {selectedContact.notes.map((note, idx) => (
-                <p key={idx} className="text-sm text-[#A0AEC0]">
+                <p key={idx} className={`text-sm ${copy.muted}`}>
                   • {note}
                 </p>
               ))}

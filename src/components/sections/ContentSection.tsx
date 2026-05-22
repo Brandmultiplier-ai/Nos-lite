@@ -10,6 +10,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { useDashboard } from "@/context/DashboardContext";
 import { CHART_CARD_DESCRIPTIONS, METRIC_DESCRIPTIONS } from "@/data/metricDescriptions";
 import { HiOutlineX } from "react-icons/hi";
+import { useChartTheme } from "@/components/charts/chartTheme";
+import { useSectionThemeCopy } from "@/theme/sectionThemeCopy";
 
 interface LinkedInDraft {
   id: string;
@@ -24,6 +26,9 @@ interface LinkedInDraft {
 export function ContentSection() {
   const { data } = useDashboard();
   const { content } = data;
+  const copy = useSectionThemeCopy();
+  const { tc, themed, darkGradientGlass } = copy;
+  const { chartColors } = useChartTheme();
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
   const [drafts, setDrafts] = useState<LinkedInDraft[]>([]);
@@ -32,7 +37,7 @@ export function ContentSection() {
   const [body, setBody] = useState("");
   const [hashtags, setHashtags] = useState("");
 
-  const dotColors = ["#4940c6", "#f36901", "#01B574", "#00D4FF"];
+  const dotColors = [chartColors.primaryDark, chartColors.accent, chartColors.green, chartColors.teal];
   const selectedDraft = selectedDay == null ? null : drafts.find((d) => d.day === selectedDay) ?? null;
   const calendarWithDrafts = useMemo(
     () =>
@@ -91,9 +96,9 @@ export function ContentSection() {
     setDrafts((prev) => {
       const idx = prev.findIndex((d) => d.day === selectedDay);
       if (idx === -1) return [next, ...prev];
-      const copy = [...prev];
-      copy[idx] = next;
-      return copy;
+      const draftCopy = [...prev];
+      draftCopy[idx] = next;
+      return draftCopy;
     });
     setIsComposerOpen(false);
   };
@@ -118,10 +123,13 @@ export function ContentSection() {
       </div>
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
-        <GlassCard className="xl:col-span-1">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <GlassCard className={`xl:col-span-1 ${darkGradientGlass}`}>
+          <p className={copy.isV5 ? "nos-mboard-chart-eyebrow" : `text-xs font-semibold uppercase tracking-[0.08em] ${copy.muteSm}`}>
+            Publishing
+          </p>
+          <div className="mb-4 mt-1 flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-display text-xl font-bold text-white">LinkedIn Content Calendar</h2>
+              <h2 className={copy.h2}>LinkedIn Content Calendar</h2>
               <CardInfoTip
                 subject="LinkedIn Content Calendar"
                 text={CHART_CARD_DESCRIPTIONS["LinkedIn Content Calendar"]}
@@ -130,37 +138,43 @@ export function ContentSection() {
             <button
               type="button"
               onClick={() => openComposer(selectedDay ?? 1)}
-              className="rounded-lg bg-[#4940c6] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-95"
+              className={tc.buttonPrimary}
             >
               Create Content
             </button>
           </div>
-          <p className="mb-4 text-xs text-[#A0AEC0]">
+          <p className={`mb-4 text-xs ${copy.muted}`}>
             Click any date to create or edit a LinkedIn post for this workspace.
           </p>
-          <div className="grid grid-cols-7 gap-2">
+          <div className={`grid grid-cols-7 gap-2 ${themed ? "rounded-xl border border-[var(--theme-hairline)] bg-[var(--theme-canvas-soft)] p-3" : ""}`}>
             {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
               <div
                 key={`${d}-${i}`}
-                className="text-center text-[10px] font-medium text-[#A0AEC0]"
+                className={`text-center text-[10px] font-semibold uppercase tracking-wide ${copy.muteSm}`}
               >
                 {d}
               </div>
             ))}
-            {calendarWithDrafts.map((day) => (
+            {calendarWithDrafts.map((day) => {
+              const isSelected = selectedDay === day.day;
+              const dayClass = themed
+                ? isSelected
+                  ? "border-[var(--theme-primary)] bg-[var(--theme-primary-soft)] shadow-[var(--theme-card-shadow)] ring-1 ring-[var(--theme-primary-soft)]"
+                  : "border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] hover:border-[var(--theme-primary)] hover:shadow-[var(--theme-card-shadow)]"
+                : isSelected
+                  ? "border-[#4940c6]/60 bg-[#161A43]"
+                  : "border-white/[0.05] bg-[#0B1437]/60 hover:border-white/[0.2]";
+
+              return (
               <button
                 key={day.day}
                 type="button"
                 onClick={() => setSelectedDay(day.day)}
-                className={`flex min-h-[36px] flex-col items-center justify-center rounded-lg border p-1 transition ${
-                  selectedDay === day.day
-                    ? "border-[#4940c6]/60 bg-[#161A43]"
-                    : "border-white/[0.05] bg-[#0B1437]/60 hover:border-white/[0.2]"
-                }`}
+                className={`flex min-h-[40px] flex-col items-center justify-center rounded-xl border p-1.5 transition ${dayClass}`}
               >
-                <span className="text-xs text-[#A0AEC0]">{day.day}</span>
-                <div className="mt-0.5 flex gap-0.5">
-                  {Array.from({ length: day.posts }).map((_, i) => (
+                <span className={`text-xs font-semibold ${themed ? copy.ink : copy.muted}`}>{day.day}</span>
+                <div className="mt-1 flex min-h-[6px] gap-0.5">
+                  {Array.from({ length: Math.min(day.posts, 4) }).map((_, i) => (
                     <span
                       key={i}
                       className="h-1.5 w-1.5 rounded-full"
@@ -169,34 +183,43 @@ export function ContentSection() {
                   ))}
                 </div>
               </button>
-            ))}
+              );
+            })}
           </div>
-          <div className="mt-4 rounded-xl border border-white/[0.08] bg-black/20 p-3">
+          <div className={`mt-4 rounded-xl border p-4 ${themed ? `${tc.innerPanel} border-[var(--theme-hairline)]` : "border-white/[0.08] bg-black/20"}`}>
             {selectedDay == null ? (
-              <p className="text-xs text-[#A0AEC0]">Select a day to see post details.</p>
+              <p className={`text-xs ${copy.muted}`}>Select a day to see post details.</p>
             ) : selectedDraft ? (
               <div className="space-y-1.5 text-xs">
-                <p className="font-semibold text-white">{selectedDraft.title}</p>
-                <p className="text-[#A0AEC0]">Day {selectedDraft.day} · LinkedIn</p>
-                <p className="line-clamp-2 text-[#A0AEC0]">{selectedDraft.body}</p>
-                <p className="text-[#00D4FF]">
+                <p className={`font-semibold ${copy.ink}`}>{selectedDraft.title}</p>
+                <p className={copy.muted}>Day {selectedDraft.day} · LinkedIn</p>
+                <p className={`line-clamp-2 ${copy.muted}`}>{selectedDraft.body}</p>
+                <p className={themed ? tc.accentText : "text-[#00D4FF]"}>
                   Impressions: {selectedDraft.impressions.toLocaleString("en-US")}
                 </p>
                 <button
                   type="button"
                   onClick={() => openComposer(selectedDraft.day)}
-                  className="mt-1 rounded-md border border-white/[0.15] px-2 py-1 text-[11px] text-white"
+                  className={
+                    themed
+                      ? `${tc.buttonSecondary} !mt-1 !min-h-0 !px-2.5 !py-1 !text-[11px]`
+                      : `mt-1 rounded-md border px-2 py-1 text-[11px] ${copy.ink} border-white/[0.15]`
+                  }
                 >
                   Edit post
                 </button>
               </div>
             ) : (
               <div className="space-y-2">
-                <p className="text-xs text-[#A0AEC0]">No post scheduled on day {selectedDay}.</p>
+                <p className={`text-xs ${copy.muted}`}>No post scheduled on day {selectedDay}.</p>
                 <button
                   type="button"
                   onClick={() => openComposer(selectedDay)}
-                  className="rounded-md border border-[#4940c6]/50 px-2 py-1 text-[11px] text-white"
+                  className={
+                    themed
+                      ? `${tc.buttonPrimary} !min-h-0 !px-2.5 !py-1 !text-[11px]`
+                      : `rounded-md border px-2 py-1 text-[11px] ${copy.ink} border-[#4940c6]/50`
+                  }
                 >
                   Create post for this day
                 </button>
@@ -205,9 +228,12 @@ export function ContentSection() {
           </div>
         </GlassCard>
 
-        <GlassCard className="xl:col-span-2">
-          <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
-            <h2 className="font-display text-xl font-bold text-white">
+        <GlassCard className={`xl:col-span-2 ${darkGradientGlass}`}>
+          <p className={copy.isV5 ? "nos-mboard-chart-eyebrow" : `text-xs font-semibold uppercase tracking-[0.08em] ${copy.muteSm}`}>
+            Performance
+          </p>
+          <div className="mb-4 mt-1 flex flex-wrap items-start justify-between gap-2">
+            <h2 className={copy.h2}>
               Content Performance
             </h2>
             <CardInfoTip
@@ -231,14 +257,18 @@ export function ContentSection() {
               </thead>
               <tbody>
                 {filteredRows.map((row) => (
-                  <tr key={row.piece} className="text-white">
-                    <td className="font-semibold">{row.piece}</td>
-                    <td className="text-[#A0AEC0]">{row.channel}</td>
+                  <tr key={row.piece} className={themed ? "" : copy.ink}>
+                    <td className={`font-semibold ${copy.ink}`}>{row.piece}</td>
+                    <td>
+                      <span className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium ${themed ? "border-[var(--theme-hairline)] bg-[var(--theme-canvas-soft)] text-[var(--theme-ink-secondary)]" : copy.muted}`}>
+                        {row.channel}
+                      </span>
+                    </td>
                     <td>
                       <StatusBadge status={row.status} />
                     </td>
-                    <td>{row.reach}</td>
-                    <td>{row.engagement}</td>
+                    <td className={`font-medium ${copy.ink}`}>{row.reach}</td>
+                    <td className={themed ? tc.accentText : "text-[#00D4FF]"}>{row.engagement}</td>
                   </tr>
                 ))}
               </tbody>
@@ -256,15 +286,15 @@ export function ContentSection() {
             onClick={() => setIsComposerOpen(false)}
             aria-label="Close content composer"
           />
-          <aside className="absolute right-0 top-0 z-50 h-full w-full max-w-[520px] overflow-y-auto border-l border-white/[0.08] bg-gradient-to-b from-[#16132A]/96 via-[#0E1324]/96 to-[#070A12]/97 p-5 shadow-[-20px_0_42px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+          <aside className={`${copy.drawerAside} !max-w-[520px]`}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-display text-xl font-bold text-white">
+              <h3 className={copy.h2}>
                 Create LinkedIn Content {selectedDay ? `· Day ${selectedDay}` : ""}
               </h3>
               <button
                 type="button"
                 onClick={() => setIsComposerOpen(false)}
-                className="rounded-lg p-1 text-[#A0AEC0] hover:bg-white/[0.06] hover:text-white"
+                className={copy.closeBtn}
                 aria-label="Close content composer"
               >
                 <HiOutlineX className="h-5 w-5" />
@@ -272,29 +302,29 @@ export function ContentSection() {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]">
+                <label className={`mb-1 block text-xs font-semibold uppercase tracking-[0.08em] ${copy.muted}`}>
                   LinkedIn Title
                 </label>
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Post title..."
-                  className="w-full rounded-lg border border-white/[0.14] bg-black/30 px-3 py-2 text-sm text-white outline-none placeholder:text-[#6F7AA6] focus:border-[#4940c6]"
+                  className={copy.inputClass}
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]">
+                <label className={`mb-1 block text-xs font-semibold uppercase tracking-[0.08em] ${copy.muted}`}>
                   Images or Videos Link
                 </label>
                 <input
                   value={mediaUrl}
                   onChange={(e) => setMediaUrl(e.target.value)}
                   placeholder="https://..."
-                  className="w-full rounded-lg border border-white/[0.14] bg-black/30 px-3 py-2 text-sm text-white outline-none placeholder:text-[#6F7AA6] focus:border-[#4940c6]"
+                  className={copy.inputClass}
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]">
+                <label className={`mb-1 block text-xs font-semibold uppercase tracking-[0.08em] ${copy.muted}`}>
                   Body
                 </label>
                 <textarea
@@ -302,18 +332,18 @@ export function ContentSection() {
                   onChange={(e) => setBody(e.target.value)}
                   rows={5}
                   placeholder="Write your LinkedIn post body..."
-                  className="w-full rounded-lg border border-white/[0.14] bg-black/30 px-3 py-2 text-sm text-white outline-none placeholder:text-[#6F7AA6] focus:border-[#4940c6]"
+                  className={copy.inputClass}
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-[0.08em] text-[#A0AEC0]">
+                <label className={`mb-1 block text-xs font-semibold uppercase tracking-[0.08em] ${copy.muted}`}>
                   Hashtags
                 </label>
                 <input
                   value={hashtags}
                   onChange={(e) => setHashtags(e.target.value)}
                   placeholder="#b2b #growth #linkedin"
-                  className="w-full rounded-lg border border-white/[0.14] bg-black/30 px-3 py-2 text-sm text-white outline-none placeholder:text-[#6F7AA6] focus:border-[#4940c6]"
+                  className={copy.inputClass}
                 />
               </div>
             </div>
@@ -321,14 +351,14 @@ export function ContentSection() {
               <button
                 type="button"
                 onClick={() => setIsComposerOpen(false)}
-                className="rounded-lg border border-white/[0.15] px-4 py-2 text-sm text-white"
+                className={copy.pagBtn}
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={saveDraft}
-                className="rounded-lg bg-[#4940c6] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                className={`${tc.buttonPrimary} !min-h-[44px] disabled:opacity-40`}
                 disabled={!title.trim() || !body.trim() || selectedDay == null}
               >
                 Save LinkedIn Post

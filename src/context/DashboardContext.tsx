@@ -18,9 +18,7 @@ interface DashboardContextValue {
   section: SectionId;
   data: WorkspaceData;
   workspaceTransitioning: boolean;
-  /** Instant switch (initial load); use switchWorkspace from UI */
   setWorkspaceId: (id: WorkspaceId) => void;
-  /** Shows loading overlay then swaps workspace — for demo polish */
   switchWorkspace: (id: WorkspaceId) => void;
   setSection: (section: SectionId) => void;
 }
@@ -29,9 +27,15 @@ const WORKSPACE_SWITCH_DELAY_MS = 520;
 
 const DashboardContext = createContext<DashboardContextValue | null>(null);
 
-export function DashboardProvider({ children }: { children: ReactNode }) {
+export function DashboardProvider({
+  children,
+  initialSection = "overview",
+}: {
+  children: ReactNode;
+  initialSection?: SectionId;
+}) {
   const [workspaceId, setWorkspaceId] = useState<WorkspaceId>("alpha");
-  const [section, setSection] = useState<SectionId>("overview");
+  const [section, setSection] = useState<SectionId>(initialSection);
   const [workspaceTransitioning, setWorkspaceTransitioning] = useState(false);
   const switchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -75,11 +79,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     [workspaceId, section, data, workspaceTransitioning, handleSetWorkspaceId, switchWorkspace, handleSetSection],
   );
 
-  return (
-    <DashboardContext.Provider value={value}>
-      {children}
-    </DashboardContext.Provider>
-  );
+  return <DashboardContext.Provider value={value}>{children}</DashboardContext.Provider>;
 }
 
 export function useDashboard() {

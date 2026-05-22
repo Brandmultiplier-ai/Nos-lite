@@ -1,0 +1,527 @@
+import type { ThemeVersion } from "@/routing/versionRoutes";
+
+export interface ChartThemeTokens {
+  primary: string;
+  primaryDark: string;
+  accent: string;
+  accentBright: string;
+  teal: string;
+  green: string;
+  red: string;
+  gridStroke: string;
+  axisFill: string;
+  tooltipBackground: string;
+  tooltipBorder: string;
+  tooltipShadow: string;
+  /** Per-bar colors for capsule bar charts (V4). */
+  barPalette: string[];
+  /** Channel-specific series colors. */
+  channelColors: Record<string, string>;
+}
+
+export type MetricCardStyle = "gradient" | "flat" | "editorial" | "cubic" | "vibrant" | "mboard";
+
+export interface VersionTheme {
+  id: ThemeVersion;
+  label: string;
+  metricCardStyle: MetricCardStyle;
+  showAmbientGlow: boolean;
+  isLightTheme: boolean;
+  sidebarWidthClass: string;
+  mainOffsetClass: string;
+  cssVars: Record<string, string>;
+  statCardClassName: string;
+  statCardFeaturedClassName: string;
+  statLabelClassName: string;
+  statValueClassName: string;
+  statValueFeaturedClassName: string;
+  statDeltaPositiveClassName: string;
+  statDeltaNegativeClassName: string;
+  statContextClassName: string;
+  navIconClassName: string;
+  navIconActiveClassName: string;
+  navAccentBarClassName: string;
+  sidebarClassName: string;
+  pageClassName: string;
+  topBarClassName: string;
+  charts: ChartThemeTokens;
+}
+
+const defaultBarPalette = ["#4940c6", "#00D4FF", "#f36901", "#01B574"];
+const defaultChannelColors = {
+  Website: "#00D4FF",
+  LinkedIn: "#4940c6",
+  Email: "#f36901",
+  Content: "#01B574",
+};
+
+const sharedStatOrange =
+  "min-h-[110px] rounded-2xl border border-[#ffb066]/45 bg-gradient-to-br from-[#ff9233] via-[#f36901] to-[#e06408] p-5 shadow-[0_12px_26px_rgba(243,105,1,0.32)]";
+
+const navIconOrange =
+  "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#ff9233] via-[#f36901] to-[#e06408] text-white shadow-[0_4px_12px_rgba(243,105,1,0.25)]";
+
+const v1GradientLabels = {
+  statLabelClassName: "text-xs font-semibold uppercase tracking-[0.1em] text-white/90",
+  statValueClassName: "mt-2 font-display text-[30px] font-bold leading-none text-white",
+  statDeltaPositiveClassName: "mt-2 inline-flex rounded-lg bg-white/20 px-2 py-0.5 text-xs font-semibold text-white",
+  statDeltaNegativeClassName: "mt-2 inline-flex rounded-lg bg-black/20 px-2 py-0.5 text-xs font-semibold text-white",
+  statContextClassName: "mt-2 text-[11px] leading-snug text-white/80",
+};
+
+/** V1 — current production baseline (orange KPI + orange nav, blue chart cards). */
+const v1Theme: VersionTheme = {
+  id: "v1",
+  label: "Version 1 · Orange accent",
+  metricCardStyle: "gradient",
+  showAmbientGlow: true,
+  isLightTheme: false,
+  sidebarWidthClass: "w-[250px]",
+  mainOffsetClass: "ml-[250px]",
+  cssVars: {
+    "--theme-canvas": "#000000",
+    "--theme-canvas-soft": "#050505",
+    "--theme-canvas-card": "#18181B",
+    "--theme-card-border": "rgba(91, 78, 212, 0.2)",
+    "--theme-card-bg": "linear-gradient(165deg, #181f45 0%, #121832 52%, #0e1428 100%)",
+    "--theme-card-shadow":
+      "0 18px 34px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06)",
+    "--theme-hairline": "rgba(255, 255, 255, 0.08)",
+    "--theme-primary": "#f36901",
+    "--theme-ink": "#ffffff",
+    "--theme-ink-secondary": "#a0aec0",
+    "--theme-mute": "#718096",
+    "--theme-nav-label": "#ff9a4d",
+    "--theme-nav-label-active": "#ffffff",
+    "--theme-nav-bg-active": "rgba(243, 105, 1, 0.18)",
+    "--theme-nav-ring-active": "rgba(243, 105, 1, 0.35)",
+    "--theme-nav-accent-bar": "#f36901",
+    "--theme-nav-icon-color": "#ffffff",
+    "--theme-nav-icon-active-color": "#ffffff",
+    "--theme-glow-primary": "rgba(73, 64, 198, 0.14)",
+    "--theme-glow-accent": "rgba(243, 105, 1, 0.08)",
+    "--theme-spinner": "#4940c6",
+    "--theme-success": "#01b574",
+    "--theme-danger": "#ee5d50",
+    "--theme-stat-card-bg": "transparent",
+    "--theme-stat-card-border": "transparent",
+    "--theme-stat-card-shadow": "none",
+  },
+  statCardClassName: sharedStatOrange,
+  statCardFeaturedClassName: sharedStatOrange,
+  statValueFeaturedClassName: "mt-2 font-display text-[30px] font-bold leading-none text-white",
+  ...v1GradientLabels,
+  navIconClassName: navIconOrange,
+  navIconActiveClassName: navIconOrange,
+  navAccentBarClassName: "bg-[#f36901]",
+  sidebarClassName:
+    "border-r border-white/[0.08] bg-gradient-to-b from-[#141126]/95 via-[#0D1225]/95 to-[#06090F]/96 shadow-[12px_0_40px_rgba(0,0,0,0.42)] backdrop-blur-xl",
+  pageClassName: "bg-[#000000]",
+  topBarClassName: "nos-surface-card sticky top-4 z-20 mb-6 rounded-2xl px-5 py-4",
+  charts: {
+    primary: "#5b4ed4",
+    primaryDark: "#4940c6",
+    accent: "#f36901",
+    accentBright: "#ff7a1a",
+    teal: "#00D4FF",
+    green: "#01B574",
+    red: "#EE5D50",
+    gridStroke: "rgba(255,255,255,0.045)",
+    axisFill: "#A0AEC0",
+    tooltipBackground: "rgba(12, 10, 28, 0.96)",
+    tooltipBorder: "rgba(91, 78, 212, 0.35)",
+    tooltipShadow: "0 16px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(243, 105, 1, 0.08)",
+    barPalette: defaultBarPalette,
+    channelColors: defaultChannelColors,
+  },
+};
+
+/** V2 — Deep Space Ember (void-black canvas, flat cards, orange signal only). */
+const v2Theme: VersionTheme = {
+  id: "v2",
+  label: "Version 2 · Deep Space Ember",
+  metricCardStyle: "flat",
+  showAmbientGlow: false,
+  isLightTheme: false,
+  sidebarWidthClass: "w-[250px]",
+  mainOffsetClass: "ml-[250px]",
+  cssVars: {
+    "--theme-canvas": "#0A0A0B",
+    "--theme-canvas-soft": "#111113",
+    "--theme-canvas-card": "#18181B",
+    "--theme-canvas-raised": "#1F1F23",
+    "--theme-canvas-overlay": "#27272C",
+    "--theme-card-border": "#2A2A30",
+    "--theme-card-bg": "#18181B",
+    "--theme-card-shadow": "none",
+    "--theme-hairline": "#2A2A30",
+    "--theme-hairline-strong": "#3A3A42",
+    "--theme-primary": "#FF6B35",
+    "--theme-primary-soft": "#FF6B3520",
+    "--theme-primary-hover": "#FF8455",
+    "--theme-ink": "#FAFAFA",
+    "--theme-ink-secondary": "#A1A1AA",
+    "--theme-mute": "#71717A",
+    "--theme-nav-label": "#A1A1AA",
+    "--theme-nav-label-active": "#FF6B35",
+    "--theme-nav-bg-active": "#FF6B3520",
+    "--theme-nav-ring-active": "transparent",
+    "--theme-nav-accent-bar": "#FF6B35",
+    "--theme-nav-icon-color": "#71717A",
+    "--theme-nav-icon-active-color": "#FF6B35",
+    "--theme-glow-primary": "transparent",
+    "--theme-glow-accent": "transparent",
+    "--theme-spinner": "#FF6B35",
+    "--theme-success": "#22C55E",
+    "--theme-success-soft": "#22C55E15",
+    "--theme-danger": "#EF4444",
+    "--theme-danger-soft": "#EF444415",
+    "--theme-stat-card-bg": "#18181B",
+    "--theme-stat-card-border": "#2A2A30",
+    "--theme-stat-card-shadow": "none",
+    "--theme-stat-card-featured-border": "#FF6B35",
+    "--theme-stat-card-featured-shadow": "0 0 20px #FF6B3520",
+  },
+  statCardClassName: "nos-stat-card min-h-[110px] rounded-[10px] border p-6",
+  statCardFeaturedClassName:
+    "nos-stat-card nos-stat-card-featured min-h-[110px] rounded-[10px] border p-6",
+  statLabelClassName: "nos-stat-label",
+  statValueClassName: "nos-stat-value mt-2",
+  statValueFeaturedClassName: "nos-stat-value mt-2",
+  statDeltaPositiveClassName: "nos-stat-delta-positive mt-2",
+  statDeltaNegativeClassName: "nos-stat-delta-negative mt-2",
+  statContextClassName: "mt-2 text-[12px] leading-snug text-[var(--theme-ink-secondary)]",
+  navIconClassName:
+    "nos-nav-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-transparent",
+  navIconActiveClassName:
+    "nos-nav-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-transparent",
+  navAccentBarClassName: "bg-[#FF6B35]",
+  sidebarClassName: "nos-sidebar border-r bg-[var(--theme-canvas-soft)]",
+  pageClassName: "bg-[var(--theme-canvas)]",
+  topBarClassName:
+    "nos-topbar sticky top-4 z-20 mb-6 rounded-[10px] border px-6 py-4 bg-[var(--theme-canvas-soft)] border-[var(--theme-hairline)]",
+  charts: {
+    primary: "#FF6B35",
+    primaryDark: "#E55520",
+    accent: "#FF6B35",
+    accentBright: "#FF8455",
+    teal: "#3B82F6",
+    green: "#22C55E",
+    red: "#EF4444",
+    gridStroke: "#2A2A30",
+    axisFill: "#71717A",
+    tooltipBackground: "#18181B",
+    tooltipBorder: "#2A2A30",
+    tooltipShadow: "none",
+    barPalette: defaultBarPalette,
+    channelColors: defaultChannelColors,
+  },
+};
+const v3Theme: VersionTheme = {
+  id: "v3",
+  label: "Version 3 · CUBIC Deep Tech",
+  metricCardStyle: "cubic",
+  showAmbientGlow: true,
+  isLightTheme: false,
+  sidebarWidthClass: "w-[250px]",
+  mainOffsetClass: "ml-[250px]",
+  cssVars: {
+    "--theme-canvas": "#111319",
+    "--theme-canvas-soft": "#0E1116",
+    "--theme-canvas-card": "#1C1F26",
+    "--theme-canvas-raised": "#23262F",
+    "--theme-canvas-overlay": "#2A2D38",
+    "--theme-card-border": "rgba(255, 255, 255, 0.06)",
+    "--theme-card-bg": "#1C1F26",
+    "--theme-card-shadow": "none",
+    "--theme-hairline": "rgba(255, 255, 255, 0.06)",
+    "--theme-hairline-strong": "rgba(255, 255, 255, 0.1)",
+    "--theme-consent": "#FF9F43",
+    "--theme-primary": "#7B61FF",
+    "--theme-primary-soft": "rgba(123, 97, 255, 0.18)",
+    "--theme-primary-hover": "#6B51EF",
+    "--theme-signal-light": "#00C2FF",
+    "--theme-accent-orange": "#FF9F43",
+    "--theme-cta-bg": "#7B61FF",
+    "--theme-cta-fg": "#FFFFFF",
+    "--theme-ink": "#FFFFFF",
+    "--theme-ink-secondary": "#94A3B8",
+    "--theme-mute": "#64748B",
+    "--theme-dust": "#475569",
+    "--theme-nav-label": "#94A3B8",
+    "--theme-nav-label-active": "#FFFFFF",
+    "--theme-nav-bg-active": "#7B61FF",
+    "--theme-nav-ring-active": "transparent",
+    "--theme-nav-accent-bar": "#7B61FF",
+    "--theme-nav-icon-color": "#64748B",
+    "--theme-nav-icon-active-color": "#FFFFFF",
+    "--theme-nav-hover-bg": "rgba(255, 255, 255, 0.04)",
+    "--theme-nav-shadow": "none",
+    "--theme-glow-primary": "rgba(123, 97, 255, 0.14)",
+    "--theme-glow-accent": "rgba(0, 194, 255, 0.1)",
+    "--theme-spinner": "#7B61FF",
+    "--theme-success": "#4ADE80",
+    "--theme-success-soft": "rgba(74, 222, 128, 0.15)",
+    "--theme-danger": "#F87171",
+    "--theme-danger-soft": "rgba(248, 113, 113, 0.15)",
+    "--theme-link": "#7B61FF",
+    "--theme-stat-card-bg": "#1C1F26",
+    "--theme-stat-card-border": "rgba(255, 255, 255, 0.06)",
+    "--theme-stat-card-shadow": "none",
+    "--theme-stat-card-featured-border": "rgba(123, 97, 255, 0.45)",
+    "--theme-stat-card-featured-shadow": "0 0 24px rgba(123, 97, 255, 0.12)",
+    "--theme-elevated-shadow": "0 8px 32px rgba(0, 0, 0, 0.35)",
+    "--theme-insight-bg": "#1C1F26",
+  },
+  statCardClassName: "nos-cubic-stat-card min-h-[120px] rounded-[14px] border p-5",
+  statCardFeaturedClassName:
+    "nos-cubic-stat-card nos-cubic-stat-card-featured min-h-[120px] rounded-[14px] border p-5",
+  statLabelClassName: "nos-cubic-label",
+  statValueClassName: "nos-cubic-value mt-2",
+  statValueFeaturedClassName: "nos-cubic-value nos-cubic-value-featured mt-2",
+  statDeltaPositiveClassName: "nos-cubic-delta-positive mt-2",
+  statDeltaNegativeClassName: "nos-cubic-delta-negative mt-2",
+  statContextClassName: "mt-2 text-[13px] leading-snug text-[var(--theme-mute)]",
+  navIconClassName:
+    "nos-nav-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-transparent",
+  navIconActiveClassName:
+    "nos-nav-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white",
+  navAccentBarClassName: "hidden",
+  sidebarClassName: "nos-sidebar nos-sidebar-cubic border-r border-[var(--theme-hairline)] bg-[var(--theme-canvas)]",
+  pageClassName: "bg-[var(--theme-canvas)] text-[var(--theme-ink)]",
+  topBarClassName: "nos-topbar-cubic mb-6",
+  charts: {
+    primary: "#00C2FF",
+    primaryDark: "#7B61FF",
+    accent: "#7B61FF",
+    accentBright: "#9B85FF",
+    teal: "#00C2FF",
+    green: "#4ADE80",
+    red: "#F87171",
+    gridStroke: "rgba(255, 255, 255, 0.06)",
+    axisFill: "#64748B",
+    tooltipBackground: "#23262F",
+    tooltipBorder: "rgba(255, 255, 255, 0.08)",
+    tooltipShadow: "0 8px 24px rgba(0, 0, 0, 0.45)",
+    barPalette: ["#7B61FF", "#00C2FF", "#4ADE80", "#F87171"],
+    channelColors: {
+      Website: "#00C2FF",
+      LinkedIn: "#7B61FF",
+      Email: "#F87171",
+      Content: "#4ADE80",
+    },
+  },
+};
+const v4Theme: VersionTheme = {
+  id: "v4",
+  label: "Version 4 · Neon Dark",
+  metricCardStyle: "vibrant",
+  showAmbientGlow: true,
+  isLightTheme: false,
+  sidebarWidthClass: "w-[250px]",
+  mainOffsetClass: "ml-[250px]",
+  cssVars: {
+    "--theme-canvas": "#111111",
+    "--theme-canvas-soft": "#0d0d0d",
+    "--theme-canvas-card": "#1c1c1c",
+    "--theme-canvas-raised": "#242424",
+    "--theme-canvas-overlay": "#2a2a2a",
+    "--theme-card-border": "rgba(255, 255, 255, 0.06)",
+    "--theme-card-bg": "#1c1c1c",
+    "--theme-card-shadow": "none",
+    "--theme-hairline": "rgba(255, 255, 255, 0.06)",
+    "--theme-hairline-strong": "rgba(255, 255, 255, 0.1)",
+    "--theme-consent": "#fcd34d",
+    "--theme-primary": "#fcd34d",
+    "--theme-primary-soft": "rgba(252, 211, 77, 0.15)",
+    "--theme-primary-hover": "#fbbf24",
+    "--theme-signal-light": "#4adeca",
+    "--theme-accent-orange": "#fb923c",
+    "--theme-accent-teal": "#4adeca",
+    "--theme-accent-yellow": "#fcd34d",
+    "--theme-accent-purple": "#a855f7",
+    "--theme-accent-pink": "#f472b6",
+    "--theme-cta-bg": "#fcd34d",
+    "--theme-cta-fg": "#111111",
+    "--theme-ink": "#ffffff",
+    "--theme-ink-secondary": "#9ca3af",
+    "--theme-mute": "#6b7280",
+    "--theme-dust": "#4b5563",
+    "--theme-nav-label": "#9ca3af",
+    "--theme-nav-label-active": "#ffffff",
+    "--theme-nav-bg-active": "rgba(255, 255, 255, 0.08)",
+    "--theme-nav-ring-active": "transparent",
+    "--theme-nav-accent-bar": "#4adeca",
+    "--theme-nav-icon-color": "#6b7280",
+    "--theme-nav-icon-active-color": "#ffffff",
+    "--theme-nav-hover-bg": "rgba(255, 255, 255, 0.05)",
+    "--theme-nav-shadow": "none",
+    "--theme-glow-primary": "rgba(74, 222, 202, 0.12)",
+    "--theme-glow-accent": "rgba(168, 85, 247, 0.1)",
+    "--theme-spinner": "#4adeca",
+    "--theme-success": "#22c55e",
+    "--theme-success-soft": "rgba(34, 197, 94, 0.15)",
+    "--theme-danger": "#f472b6",
+    "--theme-danger-soft": "rgba(244, 114, 182, 0.15)",
+    "--theme-link": "#4adeca",
+    "--theme-stat-card-bg": "#1c1c1c",
+    "--theme-stat-card-border": "transparent",
+    "--theme-stat-card-shadow": "none",
+    "--theme-stat-card-featured-border": "transparent",
+    "--theme-stat-card-featured-shadow": "0 0 32px rgba(74, 222, 202, 0.25)",
+    "--theme-elevated-shadow": "0 8px 32px rgba(0, 0, 0, 0.35)",
+    "--theme-insight-bg": "#1c1c1c",
+  },
+  statCardClassName: "nos-vibrant-stat-card min-h-[130px] rounded-[28px] p-5",
+  statCardFeaturedClassName:
+    "nos-vibrant-stat-card nos-vibrant-stat-card-featured min-h-[130px] rounded-[28px] p-5",
+  statLabelClassName: "nos-vibrant-label",
+  statValueClassName: "nos-vibrant-value mt-2",
+  statValueFeaturedClassName: "nos-vibrant-value nos-vibrant-value-featured mt-2",
+  statDeltaPositiveClassName: "nos-vibrant-delta-positive mt-2",
+  statDeltaNegativeClassName: "nos-vibrant-delta-negative mt-2",
+  statContextClassName: "mt-2 text-[13px] leading-snug text-[var(--theme-mute)]",
+  navIconClassName:
+    "nos-nav-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-transparent",
+  navIconActiveClassName:
+    "nos-nav-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white",
+  navAccentBarClassName: "hidden",
+  sidebarClassName: "nos-sidebar nos-sidebar-vibrant border-r border-[var(--theme-hairline)] bg-[var(--theme-canvas)]",
+  pageClassName: "bg-[var(--theme-canvas)] text-[var(--theme-ink)]",
+  topBarClassName: "nos-topbar-vibrant mb-6",
+  charts: {
+    primary: "#a855f7",
+    primaryDark: "#9333ea",
+    accent: "#4adeca",
+    accentBright: "#f472b6",
+    teal: "#4adeca",
+    green: "#22c55e",
+    red: "#fb7185",
+    gridStroke: "rgba(255, 255, 255, 0.05)",
+    axisFill: "#6b7280",
+    tooltipBackground: "#242424",
+    tooltipBorder: "rgba(255, 255, 255, 0.08)",
+    tooltipShadow: "0 8px 32px rgba(0, 0, 0, 0.5)",
+    barPalette: ["#fb923c", "#f472b6", "#fcd34d", "#22c55e", "#4adeca"],
+    channelColors: {
+      Website: "#4adeca",
+      LinkedIn: "#a855f7",
+      Email: "#fcd34d",
+      Content: "#22c55e",
+    },
+  },
+};
+
+/** V5 — Mboard Light (navy sidebar, off-white canvas, orange accent, white cards). */
+const v5Theme: VersionTheme = {
+  id: "v5",
+  label: "Version 5 · Mboard Light",
+  metricCardStyle: "mboard",
+  showAmbientGlow: false,
+  isLightTheme: true,
+  sidebarWidthClass: "w-[260px]",
+  mainOffsetClass: "ml-[260px]",
+  cssVars: {
+    "--theme-canvas": "#F8F9FB",
+    "--theme-canvas-soft": "#F3F4F6",
+    "--theme-canvas-card": "#FFFFFF",
+    "--theme-canvas-raised": "#FFFFFF",
+    "--theme-canvas-overlay": "#EEF0F6",
+    "--theme-canvas-sidebar": "#1A1C3D",
+    "--theme-card-border": "transparent",
+    "--theme-card-bg": "#FFFFFF",
+    "--theme-card-shadow": "0 4px 20px rgba(0, 0, 0, 0.03)",
+    "--theme-hairline": "#EEF0F6",
+    "--theme-hairline-strong": "#E2E8F0",
+    "--theme-consent": "#FF9F29",
+    "--theme-primary": "#FF9F29",
+    "--theme-primary-soft": "rgba(255, 159, 41, 0.12)",
+    "--theme-primary-hover": "#FF8C00",
+    "--theme-signal-light": "#1A1C3D",
+    "--theme-accent-orange": "#FF9F29",
+    "--theme-accent-teal": "#B4D3FF",
+    "--theme-accent-yellow": "#FF9F29",
+    "--theme-accent-purple": "#9B88FF",
+    "--theme-accent-pink": "#FF8B8B",
+    "--theme-cta-bg": "#FF9F29",
+    "--theme-cta-fg": "#FFFFFF",
+    "--theme-ink": "#1A1C3D",
+    "--theme-ink-secondary": "#737791",
+    "--theme-mute": "#96A5B8",
+    "--theme-dust": "#B0BAC9",
+    "--theme-nav-label": "#8B92B3",
+    "--theme-nav-label-active": "#FF9F29",
+    "--theme-nav-bg-active": "rgba(255, 255, 255, 0.06)",
+    "--theme-nav-ring-active": "transparent",
+    "--theme-nav-accent-bar": "#FF9F29",
+    "--theme-nav-icon-color": "#8B92B3",
+    "--theme-nav-icon-active-color": "#FF9F29",
+    "--theme-nav-hover-bg": "rgba(255, 255, 255, 0.06)",
+    "--theme-nav-shadow": "none",
+    "--theme-glow-primary": "transparent",
+    "--theme-glow-accent": "transparent",
+    "--theme-spinner": "#FF9F29",
+    "--theme-success": "#22C55E",
+    "--theme-success-soft": "#ECFDF3",
+    "--theme-danger": "#EF4444",
+    "--theme-danger-soft": "#FEF2F2",
+    "--theme-link": "#1A1C3D",
+    "--theme-stat-card-bg": "#FFFFFF",
+    "--theme-stat-card-border": "transparent",
+    "--theme-stat-card-shadow": "0 4px 20px rgba(0, 0, 0, 0.03)",
+    "--theme-stat-card-featured-border": "transparent",
+    "--theme-stat-card-featured-shadow": "0 8px 28px rgba(255, 159, 41, 0.15)",
+    "--theme-elevated-shadow": "0 8px 30px rgba(0, 0, 0, 0.06)",
+    "--theme-insight-bg": "#FFFFFF",
+  },
+  statCardClassName: "nos-mboard-stat-card min-h-[120px] rounded-2xl p-5",
+  statCardFeaturedClassName: "nos-mboard-stat-card nos-mboard-stat-card-featured min-h-[120px] rounded-2xl p-5",
+  statLabelClassName: "nos-mboard-label",
+  statValueClassName: "nos-mboard-value",
+  statValueFeaturedClassName: "nos-mboard-value mt-1",
+  statDeltaPositiveClassName: "nos-mboard-delta-positive mt-3",
+  statDeltaNegativeClassName: "nos-mboard-delta-negative mt-3",
+  statContextClassName: "mt-2 text-[13px] leading-snug text-[var(--theme-mute)]",
+  navIconClassName:
+    "nos-nav-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-transparent text-[var(--theme-nav-icon-color)]",
+  navIconActiveClassName:
+    "nos-nav-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-transparent text-[var(--theme-nav-icon-active-color)]",
+  navAccentBarClassName: "hidden",
+  sidebarClassName:
+    "nos-sidebar nos-sidebar-mboard rounded-r-[32px] border-0 bg-[var(--theme-canvas-sidebar)] text-white shadow-[4px_0_24px_rgba(26,28,61,0.12)]",
+  pageClassName: "bg-[var(--theme-canvas)] text-[var(--theme-ink)]",
+  topBarClassName: "nos-topbar-mboard mb-6",
+  charts: {
+    primary: "#1A1C3D",
+    primaryDark: "#1A1C3D",
+    accent: "#FF9F29",
+    accentBright: "#FFB04D",
+    teal: "#B4D3FF",
+    green: "#22C55E",
+    red: "#FF6B6B",
+    gridStroke: "#EEF0F6",
+    axisFill: "#96A5B8",
+    tooltipBackground: "#FFFFFF",
+    tooltipBorder: "#EEF0F6",
+    tooltipShadow: "0 8px 24px rgba(0, 0, 0, 0.08)",
+    barPalette: ["#1A1C3D", "#FF9F29", "#B4D3FF", "#FF8B8B", "#9B88FF"],
+    channelColors: {
+      Website: "#1A1C3D",
+      LinkedIn: "#FF9F29",
+      Email: "#FF8B8B",
+      Content: "#9B88FF",
+    },
+  },
+};
+
+export const VERSION_THEMES: Record<ThemeVersion, VersionTheme> = {
+  v1: v1Theme,
+  v2: v2Theme,
+  v3: v3Theme,
+  v4: v4Theme,
+  v5: v5Theme,
+};
+
+export function getVersionTheme(version: ThemeVersion): VersionTheme {
+  return VERSION_THEMES[version];
+}

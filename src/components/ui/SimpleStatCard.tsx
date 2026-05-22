@@ -1,23 +1,43 @@
+"use client";
+
 import { CardInfoTip } from "@/components/ui/CardInfoTip";
-import { orangeStatCardClassName } from "@/components/ui/statCardStyles";
+import { useTheme } from "@/theme/ThemeProvider";
 
 interface SimpleStatCardProps {
   label: string;
   value: string;
   info?: string;
+  context?: string;
   className?: string;
+  featured?: boolean;
 }
 
-export function SimpleStatCard({ label, value, info, className = "" }: SimpleStatCardProps) {
+export function SimpleStatCard({
+  label,
+  value,
+  info,
+  context,
+  className = "",
+  featured = false,
+}: SimpleStatCardProps) {
+  const { theme } = useTheme();
+  const cardClass = featured ? theme.statCardFeaturedClassName : theme.statCardClassName;
+  const isMboard = theme.metricCardStyle === "mboard";
+  const tipClass =
+    theme.metricCardStyle === "gradient"
+      ? "text-white/80"
+      : isMboard
+        ? "text-[var(--theme-ink-secondary)] hover:text-[var(--theme-ink)]"
+        : "text-[var(--theme-mute)]";
+
   return (
-    <div className={`${orangeStatCardClassName} ${className}`.trim()}>
+    <div className={`${cardClass} ${className}`.trim()}>
       <div className="flex items-start justify-between gap-2">
-        <p className="min-w-0 flex-1 text-xs font-semibold uppercase tracking-[0.1em] text-white/90">
-          {label}
-        </p>
-        {info?.trim() ? <CardInfoTip subject={label} text={info} className="text-white/80" /> : null}
+        <p className={`min-w-0 flex-1 ${theme.statLabelClassName}`}>{label}</p>
+        {info?.trim() ? <CardInfoTip subject={label} text={info} className={tipClass} /> : null}
       </div>
-      <p className="mt-2 font-display text-[30px] font-bold leading-none text-white">{value}</p>
+      <p className={`${theme.statValueClassName}${isMboard ? " mt-1" : ""}`}>{value}</p>
+      {context?.trim() ? <p className={theme.statContextClassName}>{context}</p> : null}
     </div>
   );
 }

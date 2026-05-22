@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getWorkspaceSwitcherDisplay } from "@/data/anonymousWorkspace";
 import { navItems, workspaceList } from "@/data/nosData";
 import { useDashboard } from "@/context/DashboardContext";
 import { useAuth } from "@/context/AuthContext";
+import { buildVersionPath } from "@/routing/versionRoutes";
 import type { SectionId, WorkspaceId } from "@/types/nos";
+import { useTheme } from "@/theme/ThemeProvider";
+import { isCubicTheme, isMboardTheme, isVibrantTheme, useThemeClasses } from "@/theme/themeClasses";
 import {
   HiOutlineChartPie,
   HiOutlineChevronDown,
@@ -41,6 +45,15 @@ const sectionIcons: Record<SectionId, IconType> = {
 };
 
 export function Sidebar() {
+  const router = useRouter();
+  const { version, theme } = useTheme();
+  const tc = useThemeClasses();
+  const onMboardSidebar = isMboardTheme(version);
+  const sidebarInk = onMboardSidebar ? "text-white" : tc.inkText;
+  const sidebarSecondary = onMboardSidebar ? "text-[#8B92B3]" : tc.secondaryText;
+  const sidebarPanel = onMboardSidebar
+    ? "rounded-xl border border-white/10 bg-white/[0.06]"
+    : `${tc.panelFlat} ${tc.accentBorderMuted}`;
   const { section, workspaceId, data, setSection, switchWorkspace } = useDashboard();
   const { profile, logout } = useAuth();
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
@@ -48,6 +61,11 @@ export function Sidebar() {
   const workspaceWrapRef = useRef<HTMLDivElement>(null);
 
   const currentWs = getWorkspaceSwitcherDisplay(workspaceId);
+
+  const navigateSection = (next: SectionId) => {
+    setSection(next);
+    router.push(buildVersionPath(version, next));
+  };
 
   useEffect(() => {
     function handlePointerDown(e: MouseEvent) {
@@ -62,7 +80,9 @@ export function Sidebar() {
   }, [workspaceMenuOpen]);
 
   return (
-    <aside className="fixed left-0 top-0 z-30 flex h-screen w-[250px] flex-col border-r border-white/[0.08] bg-gradient-to-b from-[#141126]/95 via-[#0D1225]/95 to-[#06090F]/96 px-4 py-6 shadow-[12px_0_40px_rgba(0,0,0,0.42)] backdrop-blur-xl">
+    <aside
+      className={`fixed left-0 top-0 z-30 flex h-screen flex-col px-4 py-6 ${theme.sidebarWidthClass} ${theme.sidebarClassName}`}
+    >
       <div className="mb-6">
         <NarrativeOsLogo size="sidebar" />
       </div>
@@ -71,7 +91,7 @@ export function Sidebar() {
         <button
           type="button"
           onClick={() => setWorkspaceMenuOpen((o) => !o)}
-          className="flex w-full items-center gap-3 rounded-xl border border-white/[0.1] bg-black/30 px-3 py-2.5 text-left transition hover:border-[#4940c6]/35"
+          className={`flex w-full items-center gap-3 px-3 py-2.5 text-left transition ${sidebarPanel} hover:border-[var(--theme-hairline-strong,var(--theme-hairline))]`}
           aria-expanded={workspaceMenuOpen}
           aria-haspopup="listbox"
         >
@@ -82,19 +102,19 @@ export function Sidebar() {
             {currentWs.initials}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-semibold text-white">{currentWs.name}</span>
+            <span className={`block truncate text-sm font-semibold ${sidebarInk}`}>{currentWs.name}</span>
           </span>
           <HiOutlineChevronDown
-            className={`h-4 w-4 shrink-0 text-[#A0AEC0] transition ${workspaceMenuOpen ? "rotate-180" : ""}`}
+            className={`h-4 w-4 shrink-0 ${sidebarSecondary} transition ${workspaceMenuOpen ? "rotate-180" : ""}`}
           />
         </button>
 
         {workspaceMenuOpen && (
           <div
-            className="absolute left-0 right-0 top-[calc(100%+6px)] z-40 rounded-xl border border-white/[0.1] bg-[#0c101c]/98 p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+            className={`absolute left-0 right-0 top-[calc(100%+6px)] z-40 ${tc.dropdown}`}
             role="listbox"
           >
-            <p className="px-2 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#718096]">
+            <p className={`px-2 pb-1 pt-0.5 ${version === "v2" ? "nos-section-eyebrow" : version === "v3" ? "nos-cubic-eyebrow" : version === "v4" ? "nos-vibrant-eyebrow" : version === "v5" ? "nos-mboard-eyebrow" : "text-[10px] font-semibold uppercase tracking-wider text-[#718096]"}`}>
               Client workspace
             </p>
             {workspaceList.map((ws) => {
@@ -111,9 +131,7 @@ export function Sidebar() {
                     setWorkspaceMenuOpen(false);
                   }}
                   className={`mb-0.5 flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-sm transition last:mb-0 ${
-                    active
-                      ? "bg-[#4940c6]/22 text-white ring-1 ring-[#4940c6]/40"
-                      : "text-[#A0AEC0] hover:bg-white/[0.06] hover:text-white"
+                    active ? tc.workspaceActive : tc.workspaceInactive
                   }`}
                 >
                   <span
@@ -141,15 +159,17 @@ export function Sidebar() {
               key={item.id}
               type="button"
               data-active={active || undefined}
-              onClick={() => setSection(item.id)}
-              className={`nos-sidebar-nav-item relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium ${
-                active ? "nos-sidebar-nav-item-active" : ""
-              }`}
+              onClick={() => navigateSection(item.id)}
+              className={`nos-sidebar-nav-item relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium ${
+                version === "v3" || version === "v4" || version === "v5" ? "rounded-lg" : "rounded-xl"
+              } ${active ? "nos-sidebar-nav-item-active" : ""}`}
             >
-              {active && (
-                <span className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full bg-[#f36901]" />
+              {active && version !== "v3" && version !== "v4" && version !== "v5" && (
+                <span
+                  className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-full ${theme.navAccentBarClassName} h-6 w-0.5`}
+                />
               )}
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#ff9233] via-[#f36901] to-[#e06408] text-white shadow-[0_4px_12px_rgba(243,105,1,0.25)]">
+              <span className={active ? theme.navIconActiveClassName : theme.navIconClassName}>
                 <Icon className="h-4 w-4" />
               </span>
               {item.label}
@@ -158,39 +178,39 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="mt-auto space-y-2 border-t border-white/[0.06] pt-4">
+      <div className={`mt-auto space-y-2 border-t pt-4 ${tc.divider}`}>
         <button
           type="button"
           onClick={() => setAccountOpen((o) => !o)}
-          className="flex w-full items-center gap-3 rounded-xl border border-white/[0.08] bg-black/25 px-3 py-2.5 text-left transition hover:border-[#4940c6]/30"
+          className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition ${sidebarPanel} hover:border-[var(--theme-hairline-strong,var(--theme-hairline))]`}
           aria-expanded={accountOpen}
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#2B2F45] to-[#151823] text-white ring-2 ring-[#4940c6]/40">
+          <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${tc.accountAvatar}`}>
             <HiOutlineUser className="h-5 w-5" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-semibold text-white">{profile.displayName}</span>
-            <span className="block truncate text-[11px] text-[#A0AEC0]">{profile.workspaceEmail}</span>
+            <span className={`block truncate text-sm font-semibold ${sidebarInk}`}>{profile.displayName}</span>
+            <span className={`block truncate text-[11px] ${sidebarSecondary}`}>{profile.workspaceEmail}</span>
           </span>
-          <HiOutlineCog className="h-4 w-4 shrink-0 text-[#A0AEC0]" />
+          <HiOutlineCog className={`h-4 w-4 shrink-0 ${sidebarSecondary}`} />
         </button>
 
         {accountOpen && (
-          <div className="rounded-xl border border-white/[0.08] bg-black/35 p-3 backdrop-blur-md">
-            <p className="text-xs font-semibold text-white">Account</p>
-            <p className="mt-1 text-[11px] text-[#A0AEC0]">
+          <div className={tc.accountPanel}>
+            <p className={`text-xs font-semibold ${onMboardSidebar ? "text-white" : tc.inkText}`}>Account</p>
+            <p className={`mt-1 text-[11px] ${onMboardSidebar ? "text-[#8B92B3]" : tc.secondaryText}`}>
               Signed in as{" "}
-              <span className="font-medium text-white">{profile.loginEmail}</span>
+              <span className={`font-medium ${onMboardSidebar ? "text-white" : tc.inkText}`}>{profile.loginEmail}</span>
             </p>
-            <p className="mt-2 text-[11px] text-[#718096]">
-              Active client: <span className="text-[#A0AEC0]">{data.name}</span>
+            <p className={`mt-2 text-[11px] ${onMboardSidebar ? "text-[#8B92B3]" : tc.mutedText}`}>
+              Active client: <span className={onMboardSidebar ? "text-white" : tc.secondaryText}>{data.name}</span>
             </p>
             <button
               type="button"
-              className="mt-3 w-full rounded-lg border border-white/[0.1] py-2 text-center text-xs font-medium text-white transition hover:bg-white/[0.06]"
+              className={`mt-3 w-full rounded-lg border py-2 text-center text-xs font-medium transition ${onMboardSidebar ? "border-white/10 bg-white/[0.06] text-white hover:bg-white/10" : `${tc.panelFlat} ${tc.inkText} hover:bg-[var(--theme-canvas-card)]`}`}
               onClick={() => {
                 setAccountOpen(false);
-                setSection("settings");
+                navigateSection("settings");
               }}
             >
               Workspace settings

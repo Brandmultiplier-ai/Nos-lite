@@ -53,7 +53,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(null);
 
   useEffect(() => {
-    setSession(readStoredSession());
+    // AUTH DISABLED — restore readStoredSession() when login is required again.
+    // setSession(readStoredSession());
+    setSession({ email: DEMO_LOGIN_EMAIL });
     setReady(true);
   }, []);
 
@@ -84,7 +86,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AuthContextValue>(
     () => ({
       ready,
-      isAuthenticated: session != null,
+      // AUTH DISABLED — restore `session != null` when login is required again.
+      isAuthenticated: true,
       session,
       login,
       logout,
