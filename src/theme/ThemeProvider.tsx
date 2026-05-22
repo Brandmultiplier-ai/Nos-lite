@@ -64,9 +64,12 @@ export function useChartTheme() {
         ? [12, 12, 12, 12]
         : version === "v5"
           ? [6, 6, 6, 6]
-          : [8, 8, 0, 0]) as [number, number, number, number],
+          : version === "v6"
+            ? [2, 2, 2, 2]
+            : [8, 8, 0, 0]) as [number, number, number, number],
       isNeonCharts: version === "v4",
       isMboardCharts: version === "v5",
+      isBrandCharts: version === "v6",
       chartGridStroke: charts.gridStroke,
       axisStyle: {
         fill: charts.axisFill,
@@ -79,11 +82,11 @@ export function useChartTheme() {
         background: charts.tooltipBackground,
         border: `1px solid ${charts.tooltipBorder}`,
         borderRadius:
-          version === "v2" ? 10 : version === "v3" ? 12 : version === "v4" ? 12 : version === "v5" ? 12 : 14,
+          version === "v2" ? 10 : version === "v3" ? 12 : version === "v4" ? 12 : version === "v5" ? 12 : version === "v6" ? 2 : 14,
         color:
           version === "v5"
             ? "#1A1C3D"
-            : version === "v4"
+            : version === "v4" || version === "v6"
               ? "#ffffff"
               : version === "v3"
                 ? "#fff"

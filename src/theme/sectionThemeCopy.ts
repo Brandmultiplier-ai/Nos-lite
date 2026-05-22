@@ -1,6 +1,6 @@
 "use client";
 
-import { isMboardTheme, usesDesignTokens, useThemeClasses } from "@/theme/themeClasses";
+import { isBrandTheme, isMboardTheme, usesDesignTokens, useThemeClasses } from "@/theme/themeClasses";
 import { useTheme } from "@/theme/ThemeProvider";
 
 export function useSectionThemeCopy() {
@@ -8,6 +8,7 @@ export function useSectionThemeCopy() {
   const tc = useThemeClasses();
   const themed = usesDesignTokens(version);
   const isV5 = isMboardTheme(version);
+  const isV6 = isBrandTheme(version);
 
   const darkGradientGlass = themed
     ? ""
@@ -18,6 +19,7 @@ export function useSectionThemeCopy() {
     tc,
     themed,
     isV5,
+    isV6,
     darkGradientGlass,
     ink: themed ? tc.inkText : "text-white",
     muted: themed ? tc.secondaryText : "text-[#A0AEC0]",
@@ -44,7 +46,9 @@ export function useSectionThemeCopy() {
       `rounded-lg border px-3 py-1 text-xs font-semibold uppercase tracking-[0.06em] transition ${
         active ? tc.filterActive : `${tc.filterInactive} border-transparent`
       }`,
-    inputClass: themed
+    inputClass: isV6
+      ? "w-full min-h-12 rounded-lg border border-white bg-[rgba(255,255,255,0.05)] px-4 text-base text-white placeholder:text-white/50 focus:border-white focus:outline-none focus:shadow-[0_0_12px_rgba(168,85,247,0.3)]"
+      : themed
       ? "w-full rounded-xl border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] px-3 py-2 text-sm text-[var(--theme-ink)] placeholder:text-[var(--theme-mute)] focus:border-[var(--theme-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary-soft)]"
       : "w-full rounded-xl border border-white/[0.12] bg-black/30 px-3 py-2 text-sm text-white placeholder:text-[#718096] focus:border-[#4940c6]/60 focus:outline-none",
   };

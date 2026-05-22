@@ -8,12 +8,14 @@ export function EmptyState({ message }: { message: string }) {
   const tc = useThemeClasses();
   const themed = usesDesignTokens(version);
 
-  if (themed && (version === "v3" || version === "v4" || version === "v5")) {
+  if (themed && (version === "v3" || version === "v4" || version === "v5" || version === "v6")) {
     return (
       <p
         className={`${
           version === "v5"
             ? "rounded-2xl border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] shadow-[var(--theme-card-shadow)]"
+            : version === "v6"
+              ? "rounded-[2px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] p-10"
             : version === "v4"
               ? "rounded-[28px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)]"
               : "rounded-[14px] border border-dashed border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)]"

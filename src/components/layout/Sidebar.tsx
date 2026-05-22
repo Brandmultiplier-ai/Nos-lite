@@ -9,7 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { buildVersionPath } from "@/routing/versionRoutes";
 import type { SectionId, WorkspaceId } from "@/types/nos";
 import { useTheme } from "@/theme/ThemeProvider";
-import { isCubicTheme, isMboardTheme, isVibrantTheme, useThemeClasses } from "@/theme/themeClasses";
+import { isBrandTheme, isCubicTheme, isMboardTheme, isVibrantTheme, useThemeClasses } from "@/theme/themeClasses";
 import {
   HiOutlineChartPie,
   HiOutlineChevronDown,
@@ -63,9 +63,16 @@ export function Sidebar() {
   const currentWs = getWorkspaceSwitcherDisplay(workspaceId);
 
   const navigateSection = (next: SectionId) => {
+    if (next === section) return;
     setSection(next);
-    router.push(buildVersionPath(version, next));
+    router.replace(buildVersionPath(version, next), { scroll: false });
   };
+
+  useEffect(() => {
+    for (const item of navItems) {
+      router.prefetch(buildVersionPath(version, item.id));
+    }
+  }, [router, version]);
 
   useEffect(() => {
     function handlePointerDown(e: MouseEvent) {
@@ -114,7 +121,7 @@ export function Sidebar() {
             className={`absolute left-0 right-0 top-[calc(100%+6px)] z-40 ${tc.dropdown}`}
             role="listbox"
           >
-            <p className={`px-2 pb-1 pt-0.5 ${version === "v2" ? "nos-section-eyebrow" : version === "v3" ? "nos-cubic-eyebrow" : version === "v4" ? "nos-vibrant-eyebrow" : version === "v5" ? "nos-mboard-eyebrow" : "text-[10px] font-semibold uppercase tracking-wider text-[#718096]"}`}>
+            <p className={`px-2 pb-1 pt-0.5 ${version === "v2" ? "nos-section-eyebrow" : version === "v3" ? "nos-cubic-eyebrow" : version === "v4" ? "nos-vibrant-eyebrow" : version === "v5" ? "nos-mboard-eyebrow" : version === "v6" ? "nos-bm-eyebrow" : "text-[10px] font-semibold uppercase tracking-wider text-[#718096]"}`}>
               Client workspace
             </p>
             {workspaceList.map((ws) => {
@@ -160,11 +167,15 @@ export function Sidebar() {
               type="button"
               data-active={active || undefined}
               onClick={() => navigateSection(item.id)}
-              className={`nos-sidebar-nav-item relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium ${
-                version === "v3" || version === "v4" || version === "v5" ? "rounded-lg" : "rounded-xl"
+              className={`nos-sidebar-nav-item relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors ${
+                version === "v3" || version === "v4" || version === "v5"
+                  ? "rounded-lg"
+                  : version === "v6"
+                    ? "rounded-[2px]"
+                    : "rounded-xl"
               } ${active ? "nos-sidebar-nav-item-active" : ""}`}
             >
-              {active && version !== "v3" && version !== "v4" && version !== "v5" && (
+              {active && version !== "v3" && version !== "v4" && version !== "v5" && version !== "v6" && (
                 <span
                   className={`absolute left-0 top-1/2 -translate-y-1/2 rounded-full ${theme.navAccentBarClassName} h-6 w-0.5`}
                 />

@@ -58,6 +58,32 @@ const mboardIcon: Record<KpiStat["iconColor"], { bg: string; text: string }> = {
   green: { bg: "bg-[#FFF4E6]", text: "text-[#FF9F29]" },
 };
 
+const brandIconAccent: Record<
+  KpiStat["iconColor"],
+  { iconBg: string; iconText: string; link: string }
+> = {
+  purple: {
+    iconBg: "bg-[#4940C6]",
+    iconText: "text-white",
+    link: "text-[#4940C6]",
+  },
+  teal: {
+    iconBg: "bg-[#0EA5E9]",
+    iconText: "text-white",
+    link: "text-[#0EA5E9]",
+  },
+  blue: {
+    iconBg: "bg-[#6366F1]",
+    iconText: "text-white",
+    link: "text-[#6366F1]",
+  },
+  green: {
+    iconBg: "bg-[#F36901]",
+    iconText: "text-white",
+    link: "text-[#F36901]",
+  },
+};
+
 interface StatCardProps {
   stat: KpiStat;
   info?: string;
@@ -70,6 +96,37 @@ export function StatCard({ stat, info, featured = false }: StatCardProps) {
   const positive = stat.change >= 0;
   const cardClass = featured ? theme.statCardFeaturedClassName : theme.statCardClassName;
   const valueClass = featured ? theme.statValueFeaturedClassName : theme.statValueClassName;
+
+  if (theme.metricCardStyle === "brand") {
+    const accent = brandIconAccent[stat.iconColor];
+    return (
+      <div className={cardClass}>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-start justify-between gap-2">
+            <div
+              className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${accent.iconBg} ${accent.iconText}`}
+            >
+              <Icon className="h-5 w-5" />
+            </div>
+            {info?.trim() ? (
+              <CardInfoTip subject={stat.label} text={info} className="text-[var(--theme-mute)]" />
+            ) : null}
+          </div>
+          <div>
+            <p className={theme.statLabelClassName}>{stat.label}</p>
+            <p className={valueClass}>{stat.value}</p>
+            <div className="mt-3 flex items-center justify-between gap-2">
+              <span className={`text-base font-normal ${accent.link}`}>View all</span>
+              <span className={positive ? theme.statDeltaPositiveClassName : theme.statDeltaNegativeClassName}>
+                {positive ? "+" : ""}
+                {stat.change}%
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (theme.metricCardStyle === "mboard") {
     const icon = mboardIcon[stat.iconColor];

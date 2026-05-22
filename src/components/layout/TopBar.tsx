@@ -3,7 +3,7 @@
 import { sectionTitles } from "@/data/nosData";
 import { useDashboard } from "@/context/DashboardContext";
 import { useTheme } from "@/theme/ThemeProvider";
-import { isCubicTheme, isEditorialTheme, isMboardTheme, isVibrantTheme } from "@/theme/themeClasses";
+import { isBrandTheme, isCubicTheme, isEditorialTheme, isMboardTheme, isVibrantTheme } from "@/theme/themeClasses";
 
 export function TopBar() {
   const { section, data } = useDashboard();
@@ -41,6 +41,30 @@ export function TopBar() {
           </h1>
           <p className="mt-0.5 text-sm text-[var(--theme-ink-secondary)]">
             <span className="font-medium text-[var(--theme-ink)]">{data.name}</span>
+            {" · "}
+            {data.subtitle}
+          </p>
+        </div>
+      </header>
+    );
+  }
+
+  if (isBrandTheme(version)) {
+    return (
+      <header className={theme.topBarClassName}>
+        <div>
+          <p className="nos-bm-eyebrow">NOS · {pageTitle.toUpperCase()}</p>
+          <h1
+            className="mt-3 text-[48px] font-medium leading-[48px] text-[var(--theme-ink)]"
+            style={{ fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}
+          >
+            {pageTitle}
+          </h1>
+          <p
+            className="mt-4 text-xl font-light leading-8 text-[var(--theme-ink-secondary)]"
+            style={{ fontFamily: "var(--font-inter), Inter, system-ui, sans-serif" }}
+          >
+            <span className="font-normal text-[var(--theme-ink)]">{data.name}</span>
             {" · "}
             {data.subtitle}
           </p>

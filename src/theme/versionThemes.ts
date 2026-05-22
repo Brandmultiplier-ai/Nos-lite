@@ -19,7 +19,7 @@ export interface ChartThemeTokens {
   channelColors: Record<string, string>;
 }
 
-export type MetricCardStyle = "gradient" | "flat" | "editorial" | "cubic" | "vibrant" | "mboard";
+export type MetricCardStyle = "gradient" | "flat" | "editorial" | "cubic" | "vibrant" | "mboard" | "brand";
 
 export interface VersionTheme {
   id: ThemeVersion;
@@ -514,12 +514,110 @@ const v5Theme: VersionTheme = {
   },
 };
 
+/** V6 — BrandMultiplier (deep black canvas, charcoal cards, Rich Purple + Fiery Orange accents). */
+const v6Theme: VersionTheme = {
+  id: "v6",
+  label: "Version 6 · BrandMultiplier",
+  metricCardStyle: "brand",
+  showAmbientGlow: true,
+  isLightTheme: false,
+  sidebarWidthClass: "w-[250px]",
+  mainOffsetClass: "ml-[250px]",
+  cssVars: {
+    "--theme-canvas": "#0A0A0A",
+    "--theme-canvas-soft": "#0F0F0F",
+    "--theme-canvas-card": "#080808",
+    "--theme-canvas-raised": "#0F0F0F",
+    "--theme-canvas-overlay": "#141414",
+    "--theme-card-border": "rgba(255, 255, 255, 0.08)",
+    "--theme-card-bg": "#080808",
+    "--theme-card-shadow": "none",
+    "--theme-hairline": "rgba(255, 255, 255, 0.08)",
+    "--theme-hairline-strong": "rgba(255, 255, 255, 0.12)",
+    "--theme-primary": "#4940C6",
+    "--theme-primary-soft": "rgba(73, 64, 198, 0.18)",
+    "--theme-primary-hover": "#6366F1",
+    "--theme-signal-light": "#0EA5E9",
+    "--theme-accent-orange": "#F36901",
+    "--theme-accent-indigo": "#6366F1",
+    "--theme-cta-bg": "#4940C6",
+    "--theme-cta-fg": "#FFFFFF",
+    "--theme-ink": "#FFFFFF",
+    "--theme-ink-secondary": "#52525B",
+    "--theme-mute": "#A1A1AA",
+    "--theme-nav-label": "#A1A1AA",
+    "--theme-nav-label-active": "#FFFFFF",
+    "--theme-nav-bg-active": "rgba(73, 64, 198, 0.12)",
+    "--theme-nav-ring-active": "transparent",
+    "--theme-nav-accent-bar": "#4940C6",
+    "--theme-nav-icon-color": "#A1A1AA",
+    "--theme-nav-icon-active-color": "#4940C6",
+    "--theme-nav-hover-bg": "transparent",
+    "--theme-glow-primary": "rgba(168, 85, 247, 0.14)",
+    "--theme-glow-accent": "rgba(243, 105, 1, 0.08)",
+    "--theme-glow-cta": "rgba(168, 85, 247, 0.6)",
+    "--theme-spinner": "#4940C6",
+    "--theme-success": "#22C55E",
+    "--theme-success-soft": "rgba(34, 197, 94, 0.15)",
+    "--theme-danger": "#FF6B6B",
+    "--theme-danger-soft": "rgba(255, 107, 107, 0.15)",
+    "--theme-link": "#4940C6",
+    "--theme-stat-card-bg": "#080808",
+    "--theme-stat-card-border": "rgba(255, 255, 255, 0.08)",
+    "--theme-stat-card-shadow": "none",
+    "--theme-stat-card-featured-border": "rgba(73, 64, 198, 0.45)",
+    "--theme-stat-card-featured-shadow": "0 0 40px rgba(168, 85, 247, 0.25)",
+    "--theme-elevated-shadow": "0 10px 30px rgba(0, 0, 0, 0.35)",
+    "--theme-insight-bg": "#080808",
+  },
+  statCardClassName: "nos-bm-stat-card min-h-[110px] rounded-[2px] border p-10",
+  statCardFeaturedClassName:
+    "nos-bm-stat-card nos-bm-stat-card-featured min-h-[110px] rounded-[2px] border p-10",
+  statLabelClassName: "nos-bm-label",
+  statValueClassName: "nos-bm-value mt-2",
+  statValueFeaturedClassName: "nos-bm-value nos-bm-value-featured mt-2",
+  statDeltaPositiveClassName: "nos-bm-delta-positive mt-3",
+  statDeltaNegativeClassName: "nos-bm-delta-negative mt-3",
+  statContextClassName: "mt-3 text-sm font-light leading-5 text-[var(--theme-mute)]",
+  navIconClassName:
+    "nos-nav-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-transparent text-[var(--theme-nav-icon-color)]",
+  navIconActiveClassName:
+    "nos-nav-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-transparent text-[var(--theme-nav-icon-active-color)]",
+  navAccentBarClassName: "hidden",
+  sidebarClassName:
+    "nos-sidebar nos-sidebar-bm border-r border-[var(--theme-hairline)] bg-[var(--theme-canvas)]",
+  pageClassName: "bg-[var(--theme-canvas)] text-[var(--theme-ink)]",
+  topBarClassName: "nos-topbar-bm mb-12",
+  charts: {
+    primary: "#4940C6",
+    primaryDark: "#4940C6",
+    accent: "#F36901",
+    accentBright: "#FF7A1A",
+    teal: "#0EA5E9",
+    green: "#22C55E",
+    red: "#FF6B6B",
+    gridStroke: "rgba(255, 255, 255, 0.06)",
+    axisFill: "#A1A1AA",
+    tooltipBackground: "#080808",
+    tooltipBorder: "rgba(255, 255, 255, 0.08)",
+    tooltipShadow: "0 10px 30px rgba(0, 0, 0, 0.35)",
+    barPalette: ["#4940C6", "#6366F1", "#F36901", "#0EA5E9"],
+    channelColors: {
+      Website: "#0EA5E9",
+      LinkedIn: "#4940C6",
+      Email: "#F36901",
+      Content: "#6366F1",
+    },
+  },
+};
+
 export const VERSION_THEMES: Record<ThemeVersion, VersionTheme> = {
   v1: v1Theme,
   v2: v2Theme,
   v3: v3Theme,
   v4: v4Theme,
   v5: v5Theme,
+  v6: v6Theme,
 };
 
 export function getVersionTheme(version: ThemeVersion): VersionTheme {

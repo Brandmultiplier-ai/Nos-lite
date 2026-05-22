@@ -19,7 +19,6 @@ import { WebsiteSignalsSection } from "@/components/sections/WebsiteSignalsSecti
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { DashboardProvider, useDashboard } from "@/context/DashboardContext";
 import type { ThemeVersion } from "@/routing/versionRoutes";
-import type { SectionId } from "@/types/nos";
 import { ThemeProvider, useTheme } from "@/theme/ThemeProvider";
 
 function SectionContent() {
@@ -71,7 +70,7 @@ function DashboardContent() {
             className="absolute right-0 top-1/4 h-72 w-80 rounded-full blur-[120px]"
             style={{ backgroundColor: theme.cssVars["--theme-glow-accent"] }}
           />
-          {version !== "v3" && version !== "v4" && (
+          {version !== "v3" && version !== "v4" && version !== "v6" && (
             <>
               <div className="absolute top-1/3 h-80 w-[42vw] rounded-full bg-[#2a2460]/18 blur-[130px]" />
               <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-[#0a0a0a]/60 blur-[140px]" />
@@ -81,6 +80,12 @@ function DashboardContent() {
             <>
               <div className="absolute bottom-0 left-1/4 h-72 w-72 rounded-full blur-[120px]" style={{ backgroundColor: "rgba(168, 85, 247, 0.08)" }} />
               <div className="absolute -bottom-24 right-1/3 h-64 w-64 rounded-full blur-[100px]" style={{ backgroundColor: "rgba(252, 211, 77, 0.06)" }} />
+            </>
+          )}
+          {version === "v6" && (
+            <>
+              <div className="absolute -left-24 top-0 h-96 w-96 rounded-full blur-[140px]" style={{ backgroundColor: "rgba(168, 85, 247, 0.12)" }} />
+              <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full blur-[120px]" style={{ backgroundColor: "rgba(243, 105, 1, 0.06)" }} />
             </>
           )}
         </div>
@@ -121,7 +126,7 @@ function DashboardContent() {
   );
 }
 
-function AuthenticatedShell({ initialSection }: { initialSection: SectionId }) {
+function AuthenticatedShell() {
   const { ready, isAuthenticated } = useAuth();
   const { theme } = useTheme();
 
@@ -142,7 +147,7 @@ function AuthenticatedShell({ initialSection }: { initialSection: SectionId }) {
   // }
 
   return (
-    <DashboardProvider initialSection={initialSection}>
+    <DashboardProvider>
       <DashboardContent />
     </DashboardProvider>
   );
@@ -150,15 +155,13 @@ function AuthenticatedShell({ initialSection }: { initialSection: SectionId }) {
 
 export function DashboardShell({
   version,
-  initialSection = "overview",
 }: {
   version: ThemeVersion;
-  initialSection?: SectionId;
 }) {
   return (
     <AuthProvider>
       <ThemeProvider version={version}>
-        <AuthenticatedShell initialSection={initialSection} />
+        <AuthenticatedShell />
       </ThemeProvider>
     </AuthProvider>
   );

@@ -9,8 +9,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useParams } from "next/navigation";
 import { mergeAnonymousWorkspaceProfile } from "@/data/anonymousWorkspace";
 import { getWorkspaceDataWithDemo } from "@/data/demoWorkspace";
+import { parseSectionSlug } from "@/routing/versionRoutes";
 import type { SectionId, WorkspaceData, WorkspaceId } from "@/types/nos";
 
 interface DashboardContextValue {
@@ -27,15 +29,20 @@ const WORKSPACE_SWITCH_DELAY_MS = 520;
 
 const DashboardContext = createContext<DashboardContextValue | null>(null);
 
-export function DashboardProvider({
-  children,
-  initialSection = "overview",
-}: {
-  children: ReactNode;
-  initialSection?: SectionId;
-}) {
+function sectionFromParams(params: ReturnType<typeof useParams>): SectionId {
+  const sectionParam = params.section;
+  const segments = Array.isArray(sectionParam)
+    ? sectionParam
+    : sectionParam
+      ? [sectionParam]
+      : undefined;
+  return parseSectionSlug(segments);
+}
+
+export function DashboardProvider({ children }: { children: ReactNode }) {
+  const params = useParams();
   const [workspaceId, setWorkspaceId] = useState<WorkspaceId>("alpha");
-  const [section, setSection] = useState<SectionId>(initialSection);
+  const [section, setSection] = useState<SectionId>(() => sectionFromParams(params));
   const [workspaceTransitioning, setWorkspaceTransitioning] = useState(false);
   const switchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 

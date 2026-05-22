@@ -343,11 +343,72 @@ const v5ThemeClasses: ThemeClasses = {
   dangerText: "text-[var(--theme-danger)]",
 };
 
+const v6ThemeClasses: ThemeClasses = {
+  eyebrow: "nos-bm-eyebrow",
+  accentText: "text-[var(--theme-primary)]",
+  accentTextHover: "text-[var(--theme-primary-hover)] hover:text-[var(--theme-primary)]",
+  accentBgSolid: "bg-[var(--theme-primary)]",
+  accentBgMuted: "bg-[var(--theme-primary-soft)]",
+  accentBgSoft: "bg-[var(--theme-primary-soft)]",
+  accentBorder: "border-[var(--theme-primary)]",
+  accentBorderMuted: "border-[var(--theme-hairline)]",
+  accentBorderStrong: "border-[var(--theme-accent-orange)]",
+  panelFlat: "rounded-[2px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)]",
+  panelRaised:
+    "rounded-[2px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] shadow-[var(--theme-elevated-shadow)]",
+  innerPanel:
+    "rounded-[2px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] p-10",
+  insightCard:
+    "rounded-[2px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] p-10 border-l-[3px] border-l-[var(--theme-primary)]",
+  tabActive: "rounded-[100px] bg-[var(--theme-primary)] text-white shadow-[0_0_40px_rgba(168,85,247,0.6)]",
+  tabInactive: "text-[var(--theme-mute)] hover:text-[var(--theme-ink)]",
+  filterActive:
+    "rounded-[100px] border border-[var(--theme-primary)] bg-[var(--theme-primary-soft)] text-[var(--theme-ink)]",
+  filterInactive: "text-[var(--theme-mute)] hover:text-[var(--theme-ink-secondary)]",
+  rowInteractive:
+    "rounded-[2px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] transition hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]",
+  rowSelected: "border-l-[var(--theme-primary)] bg-[var(--theme-canvas-raised)]",
+  rowSelectedBorder: "ring-1 ring-[var(--theme-primary)] bg-[var(--theme-canvas-raised)]",
+  avatar: "rounded-full bg-[var(--theme-canvas-overlay)] text-[var(--theme-ink)]",
+  badge:
+    "rounded-[100px] bg-[var(--theme-canvas-overlay)] px-3 py-1 text-sm text-[var(--theme-ink-secondary)]",
+  badgeText: "text-[var(--theme-ink-secondary)]",
+  buttonPrimary: "nos-btn-bm-primary",
+  buttonSecondary: "nos-btn-bm-secondary",
+  link: "text-[var(--theme-ink)] hover:underline hover:decoration-[var(--theme-primary)] hover:decoration-2",
+  progressPrimary: "rounded-full bg-[var(--theme-primary)]",
+  progressSecondary: "rounded-full bg-[var(--theme-canvas-overlay)]",
+  focusBorder:
+    "focus:border-white focus:shadow-[0_0_12px_rgba(168,85,247,0.3)]",
+  workspaceActive:
+    "bg-[var(--theme-primary-soft)] text-[var(--theme-primary)] ring-1 ring-[var(--theme-primary)]",
+  workspaceInactive:
+    "text-[var(--theme-mute)] hover:text-[var(--theme-ink)]",
+  accountAvatar:
+    "rounded-[8px] bg-[rgba(255,255,255,0.05)] text-[var(--theme-ink)] ring-1 ring-[var(--theme-hairline)]",
+  accountPanel:
+    "rounded-[2px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] p-6 shadow-[var(--theme-elevated-shadow)]",
+  dropdown:
+    "rounded-[2px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] p-2 shadow-[var(--theme-elevated-shadow)]",
+  divider: "border-[var(--theme-hairline)]",
+  mutedText: "text-[var(--theme-mute)]",
+  secondaryText: "text-[var(--theme-ink-secondary)]",
+  inkText: "text-[var(--theme-ink)]",
+  logoMark: "bg-[var(--theme-primary)]",
+  sectionTitle: "text-base font-medium leading-4 text-[var(--theme-ink)]",
+  sectionTitleLg: "text-[48px] font-medium leading-[48px] text-[var(--theme-ink)]",
+  tabBarShell:
+    "inline-flex rounded-[2px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] p-1",
+  successText: "text-[var(--theme-success)]",
+  dangerText: "text-[var(--theme-danger)]",
+};
+
 export function getThemeClasses(version: ThemeVersion): ThemeClasses {
   if (version === "v2") return v2ThemeClasses;
   if (version === "v3") return v3ThemeClasses;
   if (version === "v4") return v4ThemeClasses;
   if (version === "v5") return v5ThemeClasses;
+  if (version === "v6") return v6ThemeClasses;
   return v1ThemeClasses;
 }
 
@@ -370,6 +431,9 @@ export function insightAccentClass(channel: string, version: ThemeVersion): stri
   if (version === "v5") {
     return getThemeClasses("v5").insightCard;
   }
+  if (version === "v6") {
+    return getThemeClasses("v6").insightCard;
+  }
   if (channel === "Website") return "from-[#00D4FF]/18 border-[#00D4FF]/35";
   if (channel === "LinkedIn") return "from-[#4940c6]/18 border-[#4940c6]/35";
   if (channel === "Email") return "from-[#EE8A50]/14 border-[#EE8A50]/32";
@@ -379,6 +443,10 @@ export function insightAccentClass(channel: string, version: ThemeVersion): stri
 
 export function isEmberTheme(version: ThemeVersion): boolean {
   return version === "v2";
+}
+
+export function isBrandTheme(version: ThemeVersion): boolean {
+  return version === "v6";
 }
 
 export function isMboardTheme(version: ThemeVersion): boolean {
@@ -399,5 +467,5 @@ export function isEditorialTheme(version: ThemeVersion): boolean {
 }
 
 export function usesDesignTokens(version: ThemeVersion): boolean {
-  return version === "v2" || version === "v3" || version === "v4" || version === "v5";
+  return version === "v2" || version === "v3" || version === "v4" || version === "v5" || version === "v6";
 }

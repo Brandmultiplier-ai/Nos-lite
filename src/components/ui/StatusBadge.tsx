@@ -1,6 +1,6 @@
 "use client";
 
-import { isCubicTheme, isVibrantTheme, usesDesignTokens } from "@/theme/themeClasses";
+import { isBrandTheme, isCubicTheme, isVibrantTheme, usesDesignTokens } from "@/theme/themeClasses";
 import { useTheme } from "@/theme/ThemeProvider";
 
 const v1StatusColors: Record<string, string> = {
@@ -43,7 +43,13 @@ export function StatusBadge({ status }: { status: string }) {
   const { version } = useTheme();
   const themed = usesDesignTokens(version);
   const colors = themed ? themedStatusColors : v1StatusColors;
-  const radius = isVibrantTheme(version) || isCubicTheme(version) ? "rounded-lg" : themed ? "rounded-full" : "rounded-lg";
+  const radius = isBrandTheme(version)
+    ? "rounded-[100px]"
+    : isVibrantTheme(version) || isCubicTheme(version)
+      ? "rounded-lg"
+      : themed
+        ? "rounded-full"
+        : "rounded-lg";
   const border = themed
     ? "border border-[var(--theme-hairline)]"
     : "border border-white/10";

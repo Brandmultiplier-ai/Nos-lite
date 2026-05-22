@@ -1,6 +1,6 @@
 import type { SectionId } from "@/types/nos";
 
-export const THEME_VERSIONS = ["v1", "v2", "v3", "v4", "v5"] as const;
+export const THEME_VERSIONS = ["v1", "v2", "v3", "v4", "v5", "v6"] as const;
 export type ThemeVersion = (typeof THEME_VERSIONS)[number];
 
 export const DEFAULT_THEME_VERSION: ThemeVersion = "v1";

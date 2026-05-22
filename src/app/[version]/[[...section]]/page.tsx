@@ -1,11 +1,5 @@
 import { redirect } from "next/navigation";
-import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import {
-  isSectionId,
-  isThemeVersion,
-  normalizeVersion,
-  parseSectionSlug,
-} from "@/routing/versionRoutes";
+import { isSectionId, isThemeVersion, normalizeVersion } from "@/routing/versionRoutes";
 
 interface VersionPageProps {
   params: Promise<{
@@ -14,6 +8,7 @@ interface VersionPageProps {
   }>;
 }
 
+/** Section UI lives in the version layout; this page only validates the URL segment. */
 export default async function VersionPage({ params }: VersionPageProps) {
   const { version: versionParam, section: sectionSegments } = await params;
 
@@ -22,11 +17,10 @@ export default async function VersionPage({ params }: VersionPageProps) {
   }
 
   const version = normalizeVersion(versionParam);
-  const section = parseSectionSlug(sectionSegments);
 
   if (sectionSegments?.length && !isSectionId(sectionSegments[0])) {
     redirect(`/${version}`);
   }
 
-  return <DashboardShell version={version} initialSection={section} />;
+  return null;
 }

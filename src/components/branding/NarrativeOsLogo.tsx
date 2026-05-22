@@ -2,7 +2,7 @@
 
 import { useThemeClasses } from "@/theme/themeClasses";
 import { useTheme } from "@/theme/ThemeProvider";
-import { isCubicTheme, isMboardTheme, isVibrantTheme } from "@/theme/themeClasses";
+import { isBrandTheme, isCubicTheme, isMboardTheme, isVibrantTheme } from "@/theme/themeClasses";
 
 type NarrativeOsLogoSize = "sidebar" | "hero";
 
@@ -17,7 +17,7 @@ export function NarrativeOsLogo({
   const tc = useThemeClasses();
   const hero = size === "hero";
   const isMboard = isMboardTheme(version);
-  const isTokenized = version === "v2" || isCubicTheme(version) || isVibrantTheme(version) || isMboard;
+  const isTokenized = version === "v2" || isCubicTheme(version) || isVibrantTheme(version) || isMboard || isBrandTheme(version);
 
   const mark = (
     <>

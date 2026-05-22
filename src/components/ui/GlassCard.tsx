@@ -27,7 +27,9 @@ export function GlassCard({
       : "";
 
   const borderRadius =
-    theme.metricCardStyle === "mboard"
+    theme.metricCardStyle === "brand"
+      ? "rounded-[2px]"
+      : theme.metricCardStyle === "mboard"
       ? "rounded-2xl"
       : theme.metricCardStyle === "vibrant"
       ? "rounded-[28px]"
@@ -39,10 +41,19 @@ export function GlassCard({
             ? "rounded-[10px]"
             : "rounded-2xl";
 
+  const paddingClass =
+    theme.metricCardStyle === "brand"
+      ? padding === "sm"
+        ? "p-6"
+        : padding === "md"
+          ? "p-8"
+          : "p-10"
+      : paddingMap[padding];
+
   const elevatedClass = "";
 
   return (
-    <div className={`nos-surface-card ${borderRadius}${elevatedClass} ${hoverClass} ${paddingMap[padding]} ${className}`}>
+    <div className={`nos-surface-card ${borderRadius}${elevatedClass} ${hoverClass} ${paddingClass} ${className}`}>
       {children}
     </div>
   );

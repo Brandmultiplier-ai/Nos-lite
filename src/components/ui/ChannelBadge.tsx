@@ -1,6 +1,6 @@
 "use client";
 
-import { isCubicTheme, isMboardTheme, isVibrantTheme, usesDesignTokens } from "@/theme/themeClasses";
+import { isBrandTheme, isCubicTheme, isMboardTheme, isVibrantTheme, usesDesignTokens } from "@/theme/themeClasses";
 import { useTheme } from "@/theme/ThemeProvider";
 
 const v1ChannelColors: Record<string, string> = {
@@ -34,6 +34,13 @@ export function ChannelBadge({ channel }: { channel: string }) {
         Email: "bg-[#FFF0F0] text-[#FF6B6B] border-[#FFCACA]",
         Content: "bg-[#F3EEFF] text-[#9B88FF] border-[#DDD6FE]",
       }
+    : isBrandTheme(version)
+      ? {
+          Website: "bg-[#0EA5E9]/15 text-[#0EA5E9] border-[#0EA5E9]/30",
+          LinkedIn: "bg-[#4940C6]/15 text-[#4940C6] border-[#4940C6]/30",
+          Email: "bg-[#F36901]/15 text-[#F36901] border-[#F36901]/30",
+          Content: "bg-[#6366F1]/15 text-[#6366F1] border-[#6366F1]/30",
+        }
     : isVibrantTheme(version)
     ? {
         Website: "bg-[#14332f] text-[#4adeca] border-[#4adeca]/30",
@@ -46,8 +53,9 @@ export function ChannelBadge({ channel }: { channel: string }) {
     : themed
       ? v2ChannelColors
       : v1ChannelColors;
-  const radius = isVibrantTheme(version) || isCubicTheme(version) ? "rounded-lg" : themed ? "rounded-full" : "rounded-lg";
-  const borderClass = isMboardTheme(version) || isVibrantTheme(version)
+  const radius =
+    isBrandTheme(version) ? "rounded-[2px]" : isVibrantTheme(version) || isCubicTheme(version) ? "rounded-lg" : themed ? "rounded-full" : "rounded-lg";
+  const borderClass = isMboardTheme(version) || isVibrantTheme(version) || isBrandTheme(version)
     ? "border"
     : themed
       ? "border border-[var(--theme-hairline)]"

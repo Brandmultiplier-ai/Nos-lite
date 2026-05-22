@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const VALID_VERSIONS = new Set(["v1", "v2", "v3", "v4", "v5"]);
+const VALID_VERSIONS = new Set(["v1", "v2", "v3", "v4", "v5", "v6"]);
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -19,5 +19,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/v1/:path*", "/v2/:path*", "/v3/:path*", "/v4/:path*", "/v5/:path*", "/v:version/:path*"],
+  matcher: ["/", "/v1/:path*", "/v2/:path*", "/v3/:path*", "/v4/:path*", "/v5/:path*", "/v6/:path*", "/v:version/:path*"],
 };

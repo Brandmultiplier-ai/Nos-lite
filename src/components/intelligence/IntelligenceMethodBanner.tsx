@@ -1,13 +1,25 @@
 "use client";
 
 import { HiOutlineBeaker } from "react-icons/hi";
-import { isCubicTheme, isMboardTheme, isVibrantTheme, usesDesignTokens, useThemeClasses } from "@/theme/themeClasses";
+import { isBrandTheme, isCubicTheme, isMboardTheme, isVibrantTheme, usesDesignTokens, useThemeClasses } from "@/theme/themeClasses";
 import { useTheme } from "@/theme/ThemeProvider";
 
 export function IntelligenceMethodBanner({ note }: { note: string }) {
   const { version } = useTheme();
   const tc = useThemeClasses();
   const themed = usesDesignTokens(version);
+
+  if (isBrandTheme(version)) {
+    return (
+      <div className="flex gap-3 rounded-[2px] border border-[var(--theme-hairline)] bg-[var(--theme-canvas-card)] p-6">
+        <HiOutlineBeaker className="mt-0.5 h-5 w-5 shrink-0 text-[var(--theme-primary)]" aria-hidden />
+        <p className={`text-sm font-light leading-5 ${tc.secondaryText}`}>
+          <span className={`font-bold ${tc.inkText}`}>Method: </span>
+          {note}
+        </p>
+      </div>
+    );
+  }
 
   if (isMboardTheme(version)) {
     return (

@@ -14,6 +14,7 @@ export function IntelligenceKpiGrid({ kpis }: { kpis: IntelligenceKpi[] }) {
         theme.metricCardStyle === "cubic" ||
         theme.metricCardStyle === "vibrant" ||
         theme.metricCardStyle === "mboard" ||
+        theme.metricCardStyle === "brand" ||
         theme.metricCardStyle === "editorial"
           ? "gap-4"
           : ""

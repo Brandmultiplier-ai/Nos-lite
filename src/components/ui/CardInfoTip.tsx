@@ -41,6 +41,8 @@ export function CardInfoTip({ text, subject = "Metric", className = "" }: CardIn
   const tipClass =
     version === "v5"
       ? "w-56 max-w-[min(14rem,calc(100vw-3rem))] rounded-xl border border-[var(--theme-hairline)] bg-[#FFFFFF] px-3 py-2 text-left text-[11px] font-normal leading-snug text-[var(--theme-ink-secondary)] shadow-[var(--theme-elevated-shadow)]"
+      : version === "v6"
+        ? "w-56 max-w-[min(14rem,calc(100vw-3rem))] rounded-[2px] border border-[var(--theme-hairline)] bg-[#080808] px-3 py-2 text-left text-sm font-normal leading-5 text-[var(--theme-mute)] shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
       : version === "v4"
       ? "w-56 max-w-[min(14rem,calc(100vw-3rem))] rounded-[16px] border border-white/20 bg-[#111111] px-3 py-2 text-left text-[11px] font-normal leading-snug text-[#d1d5db] shadow-[0_12px_32px_rgba(0,0,0,0.65)]"
       : version === "v3"
